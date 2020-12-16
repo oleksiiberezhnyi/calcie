@@ -1,0 +1,106 @@
+* {
+    font-family:"SF Pro Display";
+    border-style: none;
+    border-width: 1px;
+    border-color: red;
+    margin: 0;
+    padding: 0;
+}
+body {
+    height: 100%;
+    background: rgba(228,239,248,0.2);
+}
+.menu-horizontal {
+    position: fixed;
+    z-index: 2;
+    height: 80px;
+    width: 100%;
+    padding: 0px;
+    padding-right: 20px;
+    margin: 0px;
+    font-size: 18px;
+    font-weight: 100;
+    background: rgba(42,79,110,0.98);
+    box-shadow: 0px 1px 6px 1px rgba(0,2,4,0.5);
+}
+.menu {
+    position: absolute;
+    width: 800px;
+    margin-left: -400px;
+    left: 50%;
+}
+.menu-horizontal  ul {
+    display: table;
+    position: relative;
+    float: right;
+    top: 0px;
+}
+.menu-horizontal  li {
+    display: inline-block;
+    padding: 10px;
+    line-height: 60px;
+}
+.menu-horizontal  li:hover {
+    display: inline-block;
+    padding: 10px;
+    background: rgba(94,112,128,1);
+    transition: 0.6s;
+}
+.menu-horizontal  a {
+    color: rgba(228,239,248,1);
+    text-shadow: 0px 2px 4px rgba(0,2,4,1);
+}
+.menu-active {
+    background: rgba(94,112,128,0.4);
+    box-shadow: 0px 4px 4px -2px rgba(67,123,106,0.7);
+}
+.main {
+    position: absolute;
+    z-index: -1;
+    width: 800px;
+    height: 100%;
+    padding: 10px;
+    margin-left: -400px;
+    top: 80px;
+    left: 50%;
+    background: rgba(228,239,248,0.5);
+    list-style-image: url("../images/dot.svg");
+    list-style-position: inside;
+    color: rgba(5,52,91,1);
+    tab-size: 20px;
+    text-align-all: justify;
+    text-align-last: left;
+    text-indent: 20px;
+    font-weight: 100;
+    line-height: 2;
+
+}
+.footer {
+    position: absolute;
+    bottom: 0px;
+    width: 1200px;
+    height: 200px;
+}
+/*
+.menu-horizontal li:before {
+    position: absolute;
+    top: 100%;
+    content: url("../images/dot.svg");
+    width: 12px;
+}
+*/
+/* As hex codes
+
+.color-primary-0 { color: #2A4F6E }
+.color-primary-1 { color: #E4EFF8 }
+.color-primary-2 { color: #5E7080 }
+.color-primary-3 { color: #05345B }
+.color-primary-4 { color: #000204 }
+
+.rgba-primary-0 { color: rgba(42,79,110,1) }
+.rgba-primary-1 { color: rgba(228,239,248,1) }
+.rgba-primary-2 { color: rgba(94,112,128,1) }
+.rgba-primary-3 { color: rgba(5,52,91,1) }
+.rgba-primary-4 { color: rgba(0,2,4,1) }
+rgba(67, 123, 106, 1)
+*/

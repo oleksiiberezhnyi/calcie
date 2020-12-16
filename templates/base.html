@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <link type="text/css" href="{{ url_for('static', filename='css/main.css')}}" rel="stylesheet" />
+    <link type="text/css" href="{{ url_for('static', filename='SFPro/stylesheet.css')}}" rel="stylesheet" >
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+            {% if title %}
+                Тестовий сайт — {{ title }}
+            {% else %}
+                Тестовий сайт
+            {% endif %}
+        {% endblock %}
+    </title>
+</head>
+<body class="">
+    {% block header %}
+        {% block main_menu %}
+            <header class="menu-horizontal">
+                <div class="menu">
+                    <ul>
+                        {% for m in menu %}
+                            {% if m.url == request.path %}
+                                <a href="{{ m.url }}"><li class="menu-active">{{ m.name }}</li></a>
+                            {% else  %}
+                                <a href="{{ m.url }}"><li class="">{{ m.name }}</li></a>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </header>
+        {% endblock main_menu %}
+    {% endblock %}
+        <div class="main">
+            {% block main %}
+            {% endblock %}
+        </div>
+    {% block footer %}
+        <footer class="footer">
+            <p>Бережний Олексій Вікторович. 2020</p>
+        </footer>
+    {% endblock %}
+</body>
+</html>
