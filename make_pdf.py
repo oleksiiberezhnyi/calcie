@@ -5,7 +5,6 @@ class MakePDF(FPDF):
 
     def __init__(self, count_of_lines: int, filename: str):
         super().__init__()
-        print(filename)
         self.form3 = FPDF(orientation='L', unit='mm', format='A3')
         self._draw_form_3()
         if count_of_lines > 10:

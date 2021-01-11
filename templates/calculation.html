@@ -3,7 +3,7 @@
 {% endblock %}
 {% block main %}
 <div class="">
-<form action="/calculation" method="post">
+<form>
     <fieldset>
         <legend>Задайте параметри</legend>
             <p><label for="type_of_wall" class="">Виберіть тип стіни:</label>
@@ -27,9 +27,9 @@
             <p><label for="width_of_wall" class="">Введіть товщину стіни, мм:</label>
                 <input type="text" pattern="[0-9]{,3}" name="width_of_wall" id="width_of_wall" placeholder="510">
             <div class="btn">
-                <button type="submit" class="btn_submit">Додати перемичку</button>
+                <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати перемичку</button>
                 <button type="reset" class="btn_reset">Очистити форму</button>
-                <button type="submit" class="btn_result" formaction="/result">Переглянути результат</button>
+                <button type="submit" class="btn_result" formmethod="post" formaction="/result" formtarget="_blank">Переглянути результат</button>
             </div>
     </fieldset>
 </form>

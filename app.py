@@ -11,9 +11,8 @@ menu = [{'name': 'Головна', 'url': '/'},
         ]
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    print(url_for('index'))
     return render_template('index.html', title='Головна сторінка', menu=menu)
 
 
@@ -37,30 +36,31 @@ def calculation():
                                       width_of_opening,
                                       width_of_wall]
         n += 1
-    print(url_for('calculation'))
     print(result_dict)
-    return render_template('calculation.html', title = 'Розрахунки', menu = menu)
+    return render_template('calculation.html', title='Розрахунки', menu=menu)
 
 
 @app.route('/about')
 def about():
-    print(url_for('about'))
-    return render_template('about.html', title = 'Про нас', menu = menu)
+    return render_template('about.html', title='Про нас', menu=menu)
+
 
 file_number = 0
 
-@app.route('/result', methods = ['POST'])
+
+@app.route('/result', methods=['POST'])
 def result():
     global file_number
     file_number += 1
-    file_name = f'files/result{file_number}.pdf'
-    MakePDF(len(result_dict), file_name)
-    return render_template('result.html', title = 'Результат', file = file_name)
+    file_name = f'files/result_{file_number}.pdf'
+    if request.method == 'POST':
+        MakePDF(len(result_dict), file_name)
+    return render_template('result.html', title='Результат', file=file_name)
 
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('page404.html', title='Сторінка не знайдена', menu = menu)
+    return render_template('page404.html', title='Сторінка не знайдена', menu=menu)
 
 
 if __name__ == '__main__':
