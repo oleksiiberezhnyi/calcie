@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="uk" class="">
+<head>
+    <link type="text/css" href="{{ url_for('static', filename='css/result.css')}}" rel="stylesheet" />
+    <link type="text/css" href="{{ url_for('static', filename='ISOCPEUR/stylesheet.css')}}" rel="stylesheet" >
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+        {% if title %}
+        Тестовий сайт — {{ title }}
+        {% else %}
+        Тестовий сайт
+        {% endif %}
+        {% endblock %}
+    </title>
+    {% block script %}
+    {% endblock %}
+</head>
+<body class="">
+<object data="{{ url_for('static', filename=file)}}" type="application/pdf" width="100%" height="100%">
+</object>
+</body>
+</html>

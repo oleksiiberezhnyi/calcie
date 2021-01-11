@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block script %}
+{% endblock %}
+{% block main %}
+<div class="">
+<form action="/calculation" method="post">
+    <fieldset>
+        <legend>Задайте параметри</legend>
+            <p><label for="type_of_wall" class="">Виберіть тип стіни:</label>
+                <select name="type_of_wall" id="type_of_wall" class="">
+                    <option name="type_1" value="Перегородка">Перегородка</option>
+                    <option name="type_2" value="Самонесуча стіна">Самонесуча стіна</option>
+                    <option name="type_3" value="Несуча стіна">Несуча стіна</option>
+                </select>
+            <p><label for="type_of_construction_wall" class="">Виберіть опирання плит:</label>
+                <select name="type_of_construction_wall" id="type_of_construction_wall">
+                    <option name="type_4" value="Одна сторона">Опирання з однієї сторони</option>
+                    <option name="type_5" value="Дві сторони">Опирання з двох сторін</option>
+                </select>
+            <p><label for="height_of_bricks" class="">Виберіть висоту цегли:</label>
+                <select name="height_of_bricks" id="height_of_bricks">
+                    <option name="type_6" value="height_65">65 мм</option>
+                    <option name="type_7" value="height_88">88 мм</option>
+                </select>
+            <p><label for="width_of_opening" class="">Введіть ширину проєму, мм:</label>
+                <input type="text" pattern="[0-9]{,4}" name="width_of_opening" id="width_of_opening" placeholder="900">
+            <p><label for="width_of_wall" class="">Введіть товщину стіни, мм:</label>
+                <input type="text" pattern="[0-9]{,3}" name="width_of_wall" id="width_of_wall" placeholder="510">
+            <div class="btn">
+                <button type="submit" class="btn_submit">Додати перемичку</button>
+                <button type="reset" class="btn_reset">Очистити форму</button>
+                <button type="submit" class="btn_result" formaction="/result">Переглянути результат</button>
+            </div>
+    </fieldset>
+</form>
+</div>
+{% endblock %}

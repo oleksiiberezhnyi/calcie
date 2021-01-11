@@ -13,22 +13,20 @@
             {% endif %}
         {% endblock %}
     </title>
+    {% block script %}
+    {% endblock %}
 </head>
-<body class="">
+<body>
     {% block header %}
         {% block main_menu %}
-            <header class="menu-horizontal">
-                <div class="menu">
+            <header>
+                <nav class="">
                     <ul>
-                        {% for m in menu %}
-                            {% if m.url == request.path %}
-                                <a href="{{ m.url }}"><li class="menu-active">{{ m.name }}</li></a>
-                            {% else  %}
-                                <a href="{{ m.url }}"><li class="">{{ m.name }}</li></a>
-                            {% endif %}
-                        {% endfor %}
+                    {% for m in menu %}
+                        <li><a class="" href="{{ m.url }}">{{ m.name }}</a></li>
+                    {% endfor %}
                     </ul>
-                </div>
+                </nav>
             </header>
         {% endblock main_menu %}
     {% endblock %}
@@ -38,7 +36,7 @@
         </div>
     {% block footer %}
         <footer class="footer">
-            <p>Бережний Олексій Вікторович. 2020</p>
+            Oleksii Berezhnyi. Beetroot Academy. January 2021
         </footer>
     {% endblock %}
 </body>
