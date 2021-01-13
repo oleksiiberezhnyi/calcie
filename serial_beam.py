@@ -1,6 +1,7 @@
 class Catalog:
 
     def __init__(self): # mark, l, w, h, max_loads, min_support):
+        self._catalog = dict()
         self.read_from_file()
         self._len = 0
         # self._mark = mark
@@ -12,8 +13,7 @@ class Catalog:
         # self._volume = self._length * self._width * self._height
         # self._mass = 2500 * self._volume  # 2500 kg/m3
 
-    def read_from_file(self, file='files/catalog_serial.csv'):
-        self.catalog = dict()
+    def read_from_file(self, file='static/files/catalog_serial.csv'):
         with open(file, 'r') as f:
             file_lines = f.readlines()
             for line in file_lines:
@@ -27,21 +27,24 @@ class Catalog:
                 volume = round(length * width * height, 3)
                 weight = round(24.5 * volume, 3)  # 24.5 kN/m3
 
-                self.catalog[mark] = {'length, m': length,
+                self._catalog[mark] = {'length, m': length,
                                  'width, m': width,
                                  'height, m': height,
                                  'maximum loads, kN/m': max_loads,
                                  'minimum support, m': min_support,
                                  'volume, m3': volume,
                                  'weight, kN': weight
-                                 }
-        return self.catalog
+                                       }
+        return self._catalog
+
+    def get_catalog(self):
+        return self._catalog
 
     def search(self, l, loads):
         pass
 
     def __len__(self):
-        for _ in self.catalog.keys():
+        for _ in self._catalog.keys():
             self._len += 1
         return self._len
 
@@ -54,10 +57,19 @@ class Catalog:
         if self._len == 0:
             raise StopIteration
         else:
-            for k, v in self.catalog.items():
+            for k, v in self._catalog.items():
                 iter_dict[k] = v
                 self._len -= 1
             return iter_dict
+
+    def __repr__(self):
+        result = ''
+        for k, v, in self._catalog.items():
+            result += f'{k}: {v}\n'
+        return result
+
+    def __str__(self):
+        return self.__repr__()
 
 
 def selection(opening_length, loads):
@@ -79,10 +91,9 @@ def selection(opening_length, loads):
             min_support = float(parameters_list[5])
             volume = round(length * width * height, 3)
             weight = round(24.5 * volume, 3)  # 24.5 kN/m3
-
-
-
-f = Catalog()
-print(len(f))
-for i in f:
-    print(i)
+#
+#
+#
+# f = Catalog()
+# # print(len(f))
+# print(f)
