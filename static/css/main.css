@@ -11,8 +11,8 @@
 html, body {
     background: white;
     height: calc(100% - 90px);
-    min-height: 650px;
-    max-height: 700px;
+    min-height: 740px;
+    max-height: 740px;
     max-width: 640px;
     margin: auto;
 }
@@ -44,8 +44,8 @@ nav {
     padding: 0px 0px 0px 0px;
     margin: 10px 0px 20px 0px;
     background: lightslategray;
-    border-radius: 15px;
-    box-shadow: 0px 3px 3px 1px darkslategray;
+    border-radius: 5px;
+    box-shadow: 0px 0px 4px -1px lightslategray;
 }
 nav li {
     display: inline-block;
@@ -66,7 +66,7 @@ nav a {
 nav a:hover {
     color: white;
     background: slategray;
-    border-radius: 15px;
+    border-radius: 5px;
 }
 .main {
     position: relative;
@@ -75,9 +75,9 @@ nav a:hover {
     height: 100%;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
-    border-radius: 15px;
+    border-radius: 5px;
     background: aliceblue;
-    box-shadow: 0px 3px 3px 1px lightslategray;
+    box-shadow: 0px 0px 4px -1px lightslategray;
     color: darkslategray;
 }
 .main li {
@@ -132,7 +132,7 @@ select {
     background-position: right 10px center;
     background-size: 16px 12px;
     border: 1px solid lightslategray;
-    border-radius: 15px;
+    border-radius: 5px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance:none;
@@ -162,7 +162,7 @@ input {
     vertical-align: middle;
     background-color: white;
     border: 1px solid lightslategray;
-    border-radius: 15px;
+    border-radius: 5px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance:none;
@@ -184,7 +184,7 @@ button {
     text-shadow: 0px 2px 4px darkslategray;
     text-transform: uppercase;
     vertical-align: middle;
-    border-radius: 15px;
+    border-radius: 5px;
 }
 button:active {
     background-color: lightslategray;
@@ -216,8 +216,8 @@ button:active {
     padding: 0px 0px 0px 0px;
     margin: 20px 0px 10px 0px;
     background: lightslategray;
-    border-radius: 15px;
-    box-shadow: 0px 3px 3px 1px darkslategray;
+    border-radius: 5px;
+    box-shadow: 0px 0px 4px -1px darkslategray;
     color: black;
     font-weight: 100;
     font-size: 12px;

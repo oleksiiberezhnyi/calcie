@@ -1,6 +1,6 @@
 from flask import Flask, render_template, url_for, request
 from make_pdf import MakePDF
-from datetime import date
+from select_serial import SelectSerial
 
 app = Flask(__name__)
 
@@ -17,25 +17,25 @@ def index():
 
 
 result_dict = dict()
-n = 1
-mark = 'ПР'
+number_mark = 1
+position_mark = 'ПР'
 
 
 @app.route('/calculation', methods=['GET', 'POST'])
 def calculation():
-    global n
+    global number_mark
     if request.method == 'POST':
         type_of_wall = request.form['type_of_wall']
         type_of_construction_wall = request.form['type_of_construction_wall']
         height_of_bricks = request.form['height_of_bricks']
         width_of_opening = request.form['width_of_opening']
         width_of_wall = request.form['width_of_wall']
-        result_dict[f'{mark}-{n}'] = [type_of_wall,
-                                      type_of_construction_wall,
-                                      height_of_bricks,
-                                      width_of_opening,
-                                      width_of_wall]
-        n += 1
+        result_dict[f'{position_mark}-{number_mark}'] = [type_of_wall,
+                                                         type_of_construction_wall,
+                                                         height_of_bricks,
+                                                         width_of_opening,
+                                                         width_of_wall]
+        number_mark += 1
     print(result_dict)
     return render_template('calculation.html', title='Розрахунки', menu=menu)
 
@@ -51,10 +51,10 @@ file_number = 0
 @app.route('/result', methods=['POST'])
 def result():
     global file_number
-    file_number += 1
+    file_number += 1 if request.method == 'POST' else 0
     file_name = f'files/result_{file_number}.pdf'
     if request.method == 'POST':
-        MakePDF(len(result_dict), file_name)
+        MakePDF(result_dict, file_name)
     return render_template('result.html', title='Результат', file=file_name)
 
 
