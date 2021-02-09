@@ -91,9 +91,11 @@ def selection(opening_length, loads):
             min_support = float(parameters_list[5])
             volume = round(length * width * height, 3)
             weight = round(24.5 * volume, 3)  # 24.5 kN/m3
-#
-#
-#
-# f = Catalog()
-# # print(len(f))
-# print(f)
+
+
+if __name__ == '__main__':
+    # f = Catalog()
+    # # print(len(f))
+    # print(f)
+
+    print(Catalog().read_from_file())

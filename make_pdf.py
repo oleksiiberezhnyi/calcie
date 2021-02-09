@@ -1,5 +1,8 @@
 from fpdf import FPDF
+from select_serial import SelectSerial
+from collections import Counter
 
+# li = SelectSerial(['','','','',''])
 
 temp_list_req = [{'1ПБ16-1': {'length, m': 1.55,
                               'width, m': 0.12,
@@ -30,12 +33,138 @@ temp_list_req = [{'1ПБ16-1': {'length, m': 1.55,
                   }
                  ]
 
-temp_result_dict = {'ПР-1': ['Перегородка', 'Одна', '65', '', ''],
-                    'ПР-2': ['Перегородка', 'Одна', '65', '', '']
-                    }
+result_dict = {
+    'ПР-1': [
+        {'5ПБ30-37': {
+            'length, m': 2.98,
+            'width, m': 0.25,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 37.3,
+            'minimum support, m': 0.23,
+            'volume, m3': 0.164,
+            'weight, kN': 4.018
+        }
+        },
+        {'3ПБ39-8': {
+            'length, m': 3.89,
+            'width, m': 0.12,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 7.85,
+            'minimum support, m': 0.21,
+            'volume, m3': 0.103,
+            'weight, kN': 2.523
+        }
+        },
+        {'3ПБ39-8': {
+            'length, m': 3.89,
+            'width, m': 0.12,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 7.85,
+            'minimum support, m': 0.21,
+            'volume, m3': 0.103,
+            'weight, kN': 2.523
+        }
+        }
+    ],
+    'ПР-2': [
+        {'5ПБ21-27': {
+            'length, m': 2.07,
+            'width, m': 0.25,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 27.5,
+            'minimum support, m': 0.17,
+            'volume, m3': 0.114,
+            'weight, kN': 2.793
+        }
+        },
+        {'3ПБ21-8': {
+            'length, m': 2.07,
+            'width, m': 0.12,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 7.85,
+            'minimum support, m': 0.17,
+            'volume, m3': 0.055,
+            'weight, kN': 1.347
+        }
+        }
+    ],
+    'ПР-3': [
+        {'1ПБ13-1': {
+            'length, m': 1.29,
+            'width, m': 0.12,
+            'height, m': 0.065,
+            'maximum loads, kN/m': 1.47,
+            'minimum support, m': 0.1,
+            'volume, m3': 0.01,
+            'weight, kN': 0.245
+        }
+        }
+    ],
+    'ПР-4': [
+        {'1ПБ13-1': {
+            'length, m': 1.29,
+            'width, m': 0.12,
+            'height, m': 0.065,
+            'maximum loads, kN/m': 1.47,
+            'minimum support, m': 0.1,
+            'volume, m3': 0.01,
+            'weight, kN': 0.245
+        }
+        }
+    ],
+    'ПР-5': [
+        {'1ПБ13-1': {
+            'length, m': 1.29,
+            'width, m': 0.12,
+            'height, m': 0.065,
+            'maximum loads, kN/m': 1.47,
+            'minimum support, m': 0.1,
+            'volume, m3': 0.01,
+            'weight, kN': 0.245
+        }
+        }
+    ],
+    'ПР-6': [
+        {'5ПБ30-37': {
+            'length, m': 2.98,
+            'width, m': 0.25,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 37.3,
+            'minimum support, m': 0.23,
+            'volume, m3': 0.164,
+            'weight, kN': 4.018
+        }
+        },
+        {'3ПБ39-8': {
+            'length, m': 3.89,
+            'width, m': 0.12,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 7.85,
+            'minimum support, m': 0.21,
+            'volume, m3': 0.103,
+            'weight, kN': 2.523
+        }
+        },
+        {'3ПБ39-8': {
+            'length, m': 3.89,
+            'width, m': 0.12,
+            'height, m': 0.22,
+            'maximum loads, kN/m': 7.85,
+            'minimum support, m': 0.21,
+            'volume, m3': 0.103,
+            'weight, kN': 2.523
+        }
+        }
+    ]
+}
+
 
 
 class MakePDF(FPDF):
+    annotation = \
+    ''' Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію'''
+    title1 = 'Специфікація пакетів перемичок'
+    title2 = 'Специфікація елементів перемичок'
 
     def __init__(self, result_dict: dict, filename: str):
         super().__init__()
@@ -44,34 +173,57 @@ class MakePDF(FPDF):
             count_of_lines = 10
         self.form3 = FPDF(orientation='L', unit='mm', format='A3')
         self._draw_form_3()
-        self._draw_specification(count_of_lines, 20, 30,
-                                'Специфікація пакетів перемичок')
-        self._draw_specification(count_of_lines, 20, 30 + 15 + count_of_lines * 8 + 20,
-                                'Специфікація елементів перемичок')
+        self._draw_specification(count_of_lines, 20, 30, self.title1)
+        self._draw_specification(count_of_lines, 20, 30 + 15 + count_of_lines * 8 + 20, self.title2)
         self._draw_statement(count_of_lines, 230, 30)
-        annotation = \
-        ''' Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію'''
-        self._annotation(text=annotation)
-        self.make_package_of_serial_beam(temp_list_req, 3)
+        self._annotation(text=self.annotation)
+        self.count_dict = dict()
+        self.calculation_count(result_dict)
+        self.make(result_dict)
         self.form3.output(f'static/{filename}')
 
-    def make_package_of_serial_beam(self, package: list, n=6):
+    def calculation_count(self, result_dict: dict):
+        temp_list = []
+        position = 1
+        for value in result_dict.values():
+            for element in value:
+                for elem in element.keys():
+                    temp_list.append(elem)
+        for k, v in Counter(temp_list).items():
+            self.count_dict[k] = {'count': v, 'position': position}
+            position += 1
+        return self.count_dict
+
+    def make(self, result_dict: dict):
+        n = 0
+        for mark, parameters_list in result_dict.items():
+            self.make_package_of_serial_beam(parameters_list, mark, n)
+            n += 1
+
+    def make_package_of_serial_beam(self, package: list, mark: str, n):
         scale = 20
-        i = 0
-        while i < n:
-            if i < 5:
-                x0 = 265
-                y0 = 70 + 4 * 8 * i
-                for nested_dict in package:
-                    self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0)
-                    x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
-            else:
-                x0 = 355
-                y0 = 70 + 4 * 8 * (i - 5)
-                for nested_dict in package:
-                    self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0)
-                    x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
-            i += 1
+        i = n
+        if i < 5:
+            x0 = 265
+            y0 = 70 + 4 * 8 * i
+            self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
+            self.form3.set_font('iso', '', 11)
+            self.form3.text(x0 - 29, y0 - 7.5, mark)
+            for nested_dict in package:
+                position = str(self.count_dict.get(list(nested_dict.keys())[0])['position'])
+                self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0, position)
+                x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
+        else:
+            x0 = 355
+            y0 = 70 + 4 * 8 * (i - 5)
+            self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
+            self.form3.set_font('iso', '', 11)
+            self.form3.text(x0 - 29, y0 - 7.5, mark)
+            for nested_dict in package:
+                position = str(self.count_dict.get(list(nested_dict.keys())[0])['position'])
+                self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0, position)
+                x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
+        i += 1
 
     def _draw_serial_beam(self, mark: str, x=260, y=70, position: str = '00'):
         x0 = x
@@ -210,21 +362,21 @@ class MakePDF(FPDF):
             self.form3.line(x0 + 90, y0 + 15, x0 + 180, y0 + 15)
             self.form3.line(x0 + 110, y0 + 0, x0 + 110, y0 + 15 + (count_of_lines - 5) * 8 * 4)
             self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + (count_of_lines - 5) * 8 * 4)
-        else:
-            self.form3.set_font('iso', '', 14)
-            self.form3.text(x0 + 70, y0 - 5, title)
-            self.form3.set_font('iso', '', 11)
-            self.form3.text(x0 + 5, y0 + 9.25, 'Марка')
-            self.form3.text(x0 + 42, y0 + 9.25, 'Схема перерізу')
-            self.form3.text(x0 + 95, y0 + 9.25, 'Марка')
-            self.form3.text(x0 + 132, y0 + 9.25, 'Схема перерізу')
-            self.form3.line(x0 + 0, y0 + 0, x0 + 0, y0 + 15 + 5 * 8 * 4)
-            self.form3.line(x0 + 20, y0 + 0, x0 + 20, y0 + 15 + 5 * 8 * 4)
-            self.form3.line(x0 + 90, y0 + 0, x0 + 90, y0 + 15 + 5 * 8 * 4)
-            self.form3.line(x0 + 90, y0 + 0, x0 + 180, y0 + 0)
-            self.form3.line(x0 + 90, y0 + 15, x0 + 180, y0 + 15)
-            self.form3.line(x0 + 110, y0 + 0, x0 + 110, y0 + 15 + 5 * 8 * 4)
-            self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + 5 * 8 * 4)
+        # else:
+        #     self.form3.set_font('iso', '', 14)
+        #     self.form3.text(x0 + 70, y0 - 5, title)
+        #     self.form3.set_font('iso', '', 11)
+        #     self.form3.text(x0 + 5, y0 + 9.25, 'Марка')
+        #     self.form3.text(x0 + 42, y0 + 9.25, 'Схема перерізу')
+        #     self.form3.text(x0 + 95, y0 + 9.25, 'Марка')
+        #     self.form3.text(x0 + 132, y0 + 9.25, 'Схема перерізу')
+        #     self.form3.line(x0 + 0, y0 + 0, x0 + 0, y0 + 15 + 5 * 8 * 4)
+        #     self.form3.line(x0 + 20, y0 + 0, x0 + 20, y0 + 15 + 5 * 8 * 4)
+        #     self.form3.line(x0 + 90, y0 + 0, x0 + 90, y0 + 15 + 5 * 8 * 4)
+        #     self.form3.line(x0 + 90, y0 + 0, x0 + 180, y0 + 0)
+        #     self.form3.line(x0 + 90, y0 + 15, x0 + 180, y0 + 15)
+        #     self.form3.line(x0 + 110, y0 + 0, x0 + 110, y0 + 15 + 5 * 8 * 4)
+        #     self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + 5 * 8 * 4)
         self.form3.set_line_width(0.05)
         y = y0 + 47
         i = 0
@@ -245,4 +397,5 @@ class MakePDF(FPDF):
         self.form3.write(5, text)
 
 
-# MakePDF(temp_result_dict, 'files/result_test.pdf')
+if __name__ == '__main__':
+    MakePDF(result_dict, 'files/result_test.pdf')
