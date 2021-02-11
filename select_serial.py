@@ -88,11 +88,16 @@ class SelectSerial():
 
 if __name__ == '__main__':
 
-    s1 = SelectSerial(['Перегородка', '', '65', '1000', '120'])
-    s2 = SelectSerial(['Самонесуча стіна', '', '65', '1200', '510'])
-    s3 = SelectSerial(['Несуча стіна', 'Одна', '65', '2100', '510'])
-    s4 = SelectSerial(['Несуча стіна', 'Дві', '65', '2100', '640'])
+    # s1 = SelectSerial(['Перегородка', '', '65', '1000', '120'])
+    # s2 = SelectSerial(['Самонесуча стіна', '', '65', '1200', '510'])
+    # s3 = SelectSerial(['Несуча стіна', 'Одна', '65', '2100', '510'])
+    # s4 = SelectSerial(['Несуча стіна', 'Дві', '65', '2100', '120'])
+    # print(s1.get_result())
+    # print(s2.get_result())
+    # print(s3.get_result())
+    # print(s4.get_result())
+
+    s1 = SelectSerial(['Несуча стіна', 'Одна', '65', '3500', '120'])
+    s2 = SelectSerial(['Несуча стіна', 'Одна', '65', '3500', '510'])
     print(s1.get_result())
     print(s2.get_result())
-    print(s3.get_result())
-    print(s4.get_result())

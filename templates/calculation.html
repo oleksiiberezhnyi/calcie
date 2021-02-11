@@ -45,8 +45,8 @@
 <!--                <input type="text" pattern="[0-9]{,3}" name="width_of_wall" id="width_of_wall" placeholder="510" value="510">-->
             <div class="btn">
                 <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати перемичку</button>
-                <button type="reset" class="btn_reset">Очистити форму</button>
-                <button type="submit" class="btn_result" formmethod="post" formaction="/result" formtarget="_blank">Переглянути результат</button>
+<!--                <button type="reset" class="btn_reset">Очистити форму</button>-->
+                <button type="submit" class="btn_result" formmethod="get" formaction="/result_page">Переглянути результат</button>
             </div>
     </fieldset>
 </form>
@@ -62,5 +62,22 @@
     }
     });
     $("#type_of_wall").trigger("change");
+<!--    -->
+<!--    $("#type_of_beam").change(function() {-->
+<!--    if ($(this).val() == "Серійна") {-->
+<!--        $('#type_of_construction_wall').removeAttr('disabled', '');-->
+<!--        $('#height_of_bricks').removeAttr('disabled', '');-->
+<!--        $('#type_of_construction_wall').removeAttr('disabled', '');-->
+<!--        $('#type_of_construction_wall').removeAttr('disabled', '');-->
+<!--        $('#type_of_construction_wall').removeAttr('disabled', '');-->
+<!--        $('#type_of_construction_wall').removeAttr('disabled', '');-->
+<!--        $('#type_of_construction_wall').removeAttr('disabled', '');-->
+<!--        $('#hide_show').show();-->
+<!--    } else {-->
+<!--        $('#type_of_construction_wall').attr('disabled');-->
+<!--        $('#hide_show').hide();-->
+<!--    }-->
+<!--    });-->
+<!--    $("#type_of_wall").trigger("change");-->
 </script>
 {% endblock %}

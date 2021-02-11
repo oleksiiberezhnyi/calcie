@@ -37,6 +37,27 @@ class Catalog:
                                        }
         return self._catalog
 
+    def get_length(self, mark):
+        return self._catalog[mark]['length, m']
+
+    def get_width(self, mark):
+        return self._catalog[mark]['width, m']
+
+    def get_height(self, mark):
+        return self._catalog[mark]['height, m']
+
+    def get_loads(self, mark):
+        return self._catalog[mark]['maximum loads, kN/m']
+
+    def get_min_support(self, mark):
+        return self._catalog[mark]['minimum support, m']
+
+    def get_volume(self, mark):
+        return self._catalog[mark]['volume, m3']
+
+    def get_weight(self, mark):
+        return self._catalog[mark]['weight, kN']
+
     def get_catalog(self):
         return self._catalog
 

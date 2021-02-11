@@ -1,37 +1,9 @@
 from fpdf import FPDF
-from select_serial import SelectSerial
 from collections import Counter
+from datetime import datetime
+from serial_beam import Catalog
 
-# li = SelectSerial(['','','','',''])
 
-temp_list_req = [{'1ПБ16-1': {'length, m': 1.55,
-                              'width, m': 0.12,
-                              'height, m': 0.065,
-                              'maximum loads, kN/m': 1.47,
-                              'minimum support, m': 0.1,
-                              'volume, m3': 0.012,
-                              'weight, kN': 0.294
-                              }
-                  },
-                 {'3ПБ16-37': {'length, m': 1.55,
-                               'width, m': 0.12,
-                               'height, m': 0.22,
-                               'maximum loads, kN/m': 37.3,
-                               'minimum support, m': 0.17,
-                               'volume, m3': 0.041,
-                               'weight, kN': 1.004
-                               }
-                  },
-                 {'5ПБ27-37': {'length, m': 2.72,
-                               'width, m': 0.25,
-                               'height, m': 0.22,
-                               'maximum loads, kN/m': 37.3,
-                               'minimum support, m': 0.23,
-                               'volume, m3': 0.15,
-                               'weight, kN': 3.675
-                               }
-                  }
-                 ]
 
 result_dict = {
     'ПР-1': [
@@ -158,13 +130,11 @@ result_dict = {
     ]
 }
 
-
-
 class MakePDF(FPDF):
-    annotation = \
-    ''' Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію'''
+    annotation = 'Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію'
     title1 = 'Специфікація пакетів перемичок'
     title2 = 'Специфікація елементів перемичок'
+    title3 = 'Відомість перемичок'
 
     def __init__(self, result_dict: dict, filename: str):
         super().__init__()
@@ -172,17 +142,20 @@ class MakePDF(FPDF):
         if count_of_lines > 10:
             count_of_lines = 10
         self.form3 = FPDF(orientation='L', unit='mm', format='A3')
+        self.form3.add_page()
         self._draw_form_3()
-        self._draw_specification(count_of_lines, 20, 30, self.title1)
-        self._draw_specification(count_of_lines, 20, 30 + 15 + count_of_lines * 8 + 20, self.title2)
-        self._draw_statement(count_of_lines, 230, 30)
-        self._annotation(text=self.annotation)
-        self.count_dict = dict()
-        self.calculation_count(result_dict)
+        self._draw_specification_for_package(result_dict, 20, 30, self.title1)
+        self._count_dict = dict()
+        self._calculation_count(result_dict)
+        self._draw_specification_for_element(self._count_dict, 20, 30 + 15 + (count_of_lines + 2) * 8 + 20, self.title2)
+        self._draw_statement(count_of_lines, 230, 30, self.title3)
         self.make(result_dict)
+        self._annotation(text=self.annotation)
+        self.form3.add_page()
+        self._draw_form_3()
         self.form3.output(f'static/{filename}')
 
-    def calculation_count(self, result_dict: dict):
+    def _calculation_count(self, result_dict: dict):
         temp_list = []
         position = 1
         for value in result_dict.values():
@@ -190,9 +163,9 @@ class MakePDF(FPDF):
                 for elem in element.keys():
                     temp_list.append(elem)
         for k, v in Counter(temp_list).items():
-            self.count_dict[k] = {'count': v, 'position': position}
+            self._count_dict[k] = {'count': v, 'position': position}
             position += 1
-        return self.count_dict
+        return self._count_dict
 
     def make(self, result_dict: dict):
         n = 0
@@ -205,22 +178,22 @@ class MakePDF(FPDF):
         i = n
         if i < 5:
             x0 = 265
-            y0 = 70 + 4 * 8 * i
+            y0 = 67 + 4 * 8 * i
             self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
             self.form3.set_font('iso', '', 11)
-            self.form3.text(x0 - 29, y0 - 7.5, mark)
+            self.form3.text(x0 - 29, y0 - 5, mark)
             for nested_dict in package:
-                position = str(self.count_dict.get(list(nested_dict.keys())[0])['position'])
+                position = str(self._count_dict.get(list(nested_dict.keys())[0])['position'])
                 self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0, position)
                 x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
         else:
             x0 = 355
-            y0 = 70 + 4 * 8 * (i - 5)
+            y0 = 67 + 4 * 8 * (i - 5)
             self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
             self.form3.set_font('iso', '', 11)
-            self.form3.text(x0 - 29, y0 - 7.5, mark)
+            self.form3.text(x0 - 29, y0 - 5, mark)
             for nested_dict in package:
-                position = str(self.count_dict.get(list(nested_dict.keys())[0])['position'])
+                position = str(self._count_dict.get(list(nested_dict.keys())[0])['position'])
                 self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0, position)
                 x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
         i += 1
@@ -258,50 +231,65 @@ class MakePDF(FPDF):
         self.form3.set_font('iso', '', 11)
         self.form3.text(x0 + b / 4 + 0.5, y0 - h - 5.5, position)
 
-    def _draw_form_3(self):
-        self.form3.add_page()
+    def _draw_form_3(self, y=0):
+        y0 = y
         self.form3.set_line_width(0.5)
-        self.form3.rect(20, 10, 390, 277)
-        self.form3.rect(230, 232, 180, 55)
-        self.form3.line(240, 232, 240, 257)
-        self.form3.line(250, 232, 250, 287)
-        self.form3.line(260, 232, 260, 257)
-        self.form3.line(270, 232, 270, 287)
-        self.form3.line(285, 232, 285, 287)
-        self.form3.line(295, 232, 295, 287)
-        self.form3.line(365, 257, 365, 287)
-        self.form3.line(380, 257, 380, 272)
-        self.form3.line(395, 257, 395, 272)
-        self.form3.line(295, 242, 410, 242)
-        self.form3.line(230, 252, 295, 252)
-        self.form3.line(230, 257, 410, 257)
-        self.form3.line(365, 262, 410, 262)
-        self.form3.line(295, 272, 410, 272)
+        self.form3.rect(20, y0 + 10, 390, y0 + 277)
+        self.form3.rect(230, y0 + 232, 180, y0 + 55)
+        self.form3.line(240, y0 + 232, 240, y0 + 257)
+        self.form3.line(250, y0 + 232, 250, y0 + 287)
+        self.form3.line(260, y0 + 232, 260, y0 + 257)
+        self.form3.line(270, y0 + 232, 270, y0 + 287)
+        self.form3.line(285, y0 + 232, 285, y0 + 287)
+        self.form3.line(295, y0 + 232, 295, y0 + 287)
+        self.form3.line(365, y0 + 257, 365, y0 + 287)
+        self.form3.line(380, y0 + 257, 380, y0 + 272)
+        self.form3.line(395, y0 + 257, 395, y0 + 272)
+        self.form3.line(295, y0 + 242, 410, y0 + 242)
+        self.form3.line(230, y0 + 252, 295, y0 + 252)
+        self.form3.line(230, y0 + 257, 410, y0 + 257)
+        self.form3.line(365, y0 + 262, 410, y0 + 262)
+        self.form3.line(295, y0 + 272, 410, y0 + 272)
         self.form3.set_line_width(0.05)
-        self.form3.line(230, 237, 295, 237)
-        self.form3.line(230, 242, 295, 242)
-        self.form3.line(230, 247, 295, 247)
-        self.form3.line(230, 262, 295, 262)
-        self.form3.line(230, 267, 295, 267)
-        self.form3.line(230, 272, 295, 272)
-        self.form3.line(230, 277, 295, 277)
-        self.form3.line(230, 282, 295, 282)
+        self.form3.line(230, y0 + 237, 295, y0 + 237)
+        self.form3.line(230, y0 + 242, 295, y0 + 242)
+        self.form3.line(230, y0 + 247, 295, y0 + 247)
+        self.form3.line(230, y0 + 262, 295, y0 + 262)
+        self.form3.line(230, y0 + 267, 295, y0 + 267)
+        self.form3.line(230, y0 + 272, 295, y0 + 272)
+        self.form3.line(230, y0 + 277, 295, y0 + 277)
+        self.form3.line(230, y0 + 282, 295, y0 + 282)
         self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_font('iso', '', 11)
-        self.form3.text(233, 255.75, 'Зм.')
-        self.form3.text(240.75, 255.75, 'Кільк.')
-        self.form3.text(252, 255.75, 'Арк.')
-        self.form3.text(260.5, 255.75, '№док.')
-        self.form3.text(273, 255.75, 'Підпис')
-        self.form3.text(286, 255.75, 'Дата')
-        self.form3.text(367, 260.75, 'Стадія')
-        self.form3.text(382.5, 260.75, 'Аркуш')
-        self.form3.text(396.25, 260.75, 'Аркушів')
-        self.form3.image('static/images/logo_dark.png', 366.25, 273.25, 42.5, 12.5)
+        self.form3.text(233, y0 + 255.75, 'Зм.')
+        self.form3.text(240.75, y0 + 255.75, 'Кільк.')
+        self.form3.text(252, y0 + 255.75, 'Арк.')
+        self.form3.text(260.5, y0 + 255.75, '№док.')
+        self.form3.text(273, y0 + 255.75, 'Підпис')
+        self.form3.text(286, y0 + 255.75, 'Дата')
+        self.form3.text(231, y0 + 260.75, 'Виконав')
+        self.form3.text(251, y0 + 260.75, 'Бережний')
+        self.form3.text(367, y0 + 260.75, 'Стадія')
+        self.form3.text(382.5, y0 + 260.75, 'Аркуш')
+        self.form3.text(396.25, y0 + 260.75, 'Аркушів')
+        self.form3.text(296, y0 + 275.75, self.title1)
+        self.form3.text(296, y0 + 280.75, self.title2)
+        self.form3.text(296, y0 + 285.75, self.title3)
+        self.form3.set_font('iso', '', 14)
+        self.form3.text(370, y0 + 268.75, 'ЕП')
+        self.form3.text(386.5, y0 + 268.75, '1')
+        self.form3.text(401.5, y0 + 268.75, '1')
+        self.form3.text(336, y0 + 238.25, str(datetime.utcnow().strftime('%Y—%m—%d %H:%M')))
+        self.form3.image('static/images/logo_dark.png', 366.25, y0 + 273.25, 42.5, 12.5)
         
-    def _draw_specification(self, count_of_lines: int, x=230, y=30, title: str = 'Специфікація'):
+    def _draw_specification_for_package(self, result_dict: dict, x=230, y=30, title: str = 'Специфікація'):
+        keys_list =[]
+        for key in result_dict.keys():
+            keys_list.append(key)
+        count_of_lines = len(result_dict) + 2
         x0 = x
         y0 = y
+        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_line_width(0.5)
         self.form3.line(x0 + 0, y0 + 0, x0 + 180, y0 + 0)
         self.form3.line(x0 + 0, y0 + 15, x0 + 180, y0 + 15)
@@ -316,6 +304,72 @@ class MakePDF(FPDF):
         i = 0
         self.form3.set_line_width(0.05)
         while i < count_of_lines:
+            try:
+                text = f'Збірна перемичка {keys_list[i]}'
+                self.form3.set_font('iso', '', 11)
+                self.form3.text(x0 + 4, y0 + 20.25 + i * 8, keys_list[i])
+                self.form3.text(x0 + 76, y0 + 20.25 + i * 8, text)
+                self.form3.text(x0 + 139, y0 + 20.25 + i * 8, '1')
+            except IndexError:
+                pass
+            self.form3.set_font('iso', '', 11)
+            self.form3.line(x0 + 0, y, x0 + 180, y)
+            i += 1
+            y += 8
+        self.form3.set_font('iso', '', 14)
+        self.form3.text(x0 + 65, y0 - 5, title)
+        self.form3.set_font('iso', '', 11)
+        self.form3.text(x0 + 5, y0 + 9.25, 'Поз.')
+        self.form3.text(x0 + 35, y0 + 9.25, 'Позначення')
+        self.form3.text(x0 + 94, y0 + 9.25, 'Найменування')
+        self.form3.text(x0 + 135.5, y0 + 9.25, 'Кільк.')
+        self.form3.text(x0 + 145.3, y0 + 7.25, 'Маса од.,')
+        self.form3.text(x0 + 151, y0 + 11, 'кг')
+        self.form3.text(x0 + 163, y0 + 9.25, 'Примітка')
+
+    def _draw_specification_for_element(self, count_dict: dict, x=230, y=30, title: str = 'Специфікація'):
+        catalog = Catalog()
+        keys_list = []
+        for key in count_dict.keys():
+            keys_list.append(key)
+        count_of_lines = len(count_dict) + 2
+        x0 = x
+        y0 = y
+        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
+        self.form3.set_line_width(0.5)
+        self.form3.line(x0 + 0, y0 + 0, x0 + 180, y0 + 0)
+        self.form3.line(x0 + 0, y0 + 15, x0 + 180, y0 + 15)
+        self.form3.line(x0 + 0, y0 + 0, x0 + 0, y0 + 15 + count_of_lines * 8)
+        self.form3.line(x0 + 15, y0 + 0, x0 + 15, y0 + 15 + count_of_lines * 8)
+        self.form3.line(x0 + 75, y0 + 0, x0 + 75, y0 + 15 + count_of_lines * 8)
+        self.form3.line(x0 + 135, y0 + 0, x0 + 135, y0 + 15 + count_of_lines * 8)
+        self.form3.line(x0 + 145, y0 + 0, x0 + 145, y0 + 15 + count_of_lines * 8)
+        self.form3.line(x0 + 160, y0 + 0, x0 + 160, y0 + 15 + count_of_lines * 8)
+        self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + count_of_lines * 8)
+        y = y0 + 23
+        i = 0
+        self.form3.set_line_width(0.05)
+        while i < count_of_lines:
+            try:
+                self.form3.set_font('iso', '', 11)
+                self.form3.text(x0 + 6.5, y0 + 20.25 + i * 8,
+                    str(count_dict[keys_list[i]]['position'])
+                )
+                self.form3.text(x0 + 16, y0 + 20.25 + i * 8,
+                    'ДСТУ Б В.2.6-55:2008'
+                )
+                self.form3.text(x0 + 76, y0 + 20.25 + i * 8, keys_list[i])
+                self.form3.text(x0 + 139, y0 + 20.25 + i * 8,
+                    str(count_dict[keys_list[i]]['count'])
+                )
+                self.form3.text(x0 + 146.5, y0 + 20.25 + i * 8,
+                    str(round(catalog.get_weight(keys_list[i]) * 1000 / 9.8, 3))
+                )
+                self.form3.text(x0 + 161, y0 + 20.25 + i * 8,
+                    f"{str(round(catalog.get_weight(keys_list[i]) * 1000 / 9.8 * count_dict[keys_list[i]]['count'], 3))} кг"
+                )
+            except IndexError:
+                pass
             self.form3.line(x0 + 0, y, x0 + 180, y)
             i += 1
             y += 8
@@ -331,7 +385,7 @@ class MakePDF(FPDF):
         self.form3.text(x0 + 151, y0 + 11, 'кг')
         self.form3.text(x0 + 163, y0 + 9.25, 'Примітка')
 
-    def _draw_statement(self, count_of_lines: int, x=230, y=30, title: str = 'Відомість перемичок'):
+    def _draw_statement(self, count_of_lines: int, x=230, y=30, title: str = 'Відомість'):
         x0 = x
         y0 = y
         self.form3.set_line_width(0.5)
@@ -393,9 +447,7 @@ class MakePDF(FPDF):
     def _annotation(self, text: str = 'Примітка', x=30, y=257):
         self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_font('iso', '', 11)
-        self.form3.set_xy(x, y)
-        self.form3.write(5, text)
-
+        self.form3.text(x, y, text)
 
 if __name__ == '__main__':
     MakePDF(result_dict, 'files/result_test.pdf')

@@ -205,6 +205,11 @@ button:active {
 .btn_result {
     background-color: lightsteelblue;
 }
+.red_text {
+    color: red;
+    font-size: 20px;
+    font-weight: 700;
+}
 .footer {
     position: relative;
     display: inline-flex;

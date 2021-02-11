@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+{% endblock %}
+{% block main %}
+    {% for k, v in data.items() %}
+    <p>{{ k }} {{ v[0] }} {{ v[1] }} {{ v[2] }} {{ v[3] }} {{ v[4] }}</p>
+    {% endfor %}
+<div class="">
+    <div class="btn">
+        <form>
+            <button type="submit" class="btn_reset" name="clear" formmethod="post" formaction="/result_page" value="clear">Очистити дані</button>
+            <button type="submit" class="btn_result" formmethod="post" formaction="/result" formtarget="_blank">Отримати результат</button>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $("#type_of_wall").change(function() {
+    if ($(this).val() == "Несуча стіна") {
+        $('#type_of_construction_wall').removeAttr('disabled', '');
+        $('#hide_show').show();
+    } else {
+        $('#type_of_construction_wall').attr('disabled');
+        $('#hide_show').hide();
+    }
+    });
+    $("#type_of_wall").trigger("change");
+</script>
+{% endblock %}
