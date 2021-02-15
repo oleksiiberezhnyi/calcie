@@ -22,24 +22,12 @@
                     <option name="type_4" value="Одна">Опирання з однієї сторони</option>
                     <option name="type_5" value="Дві">Опирання з двох сторін</option>
                 </select>
-            <p id="hide_show_height_of_bricks"><label for="height_of_bricks" class="">Виберіть висоту цегли:</label>
-                <select name="height_of_bricks" id="height_of_bricks">
-                    <option name="type_6" value="65">65 мм</option>
-                    <option name="type_7" value="88">88 мм</option>
-                </select>
+            <p id="hide_show_height_of_beam"><label for="height_of_beam" class="">Задайте висоту балки:</label>
+                <input type="text" pattern="[0-9]{,3}" name="height_of_beam" id="height_of_beam" placeholder="250" value="250">
             <p><label for="width_of_opening" class="">Введіть ширину проєму, мм:</label>
                 <input type="text" pattern="[0-9]{,4}" name="width_of_opening" id="width_of_opening" placeholder="900" value="900">
             <p><label for="width_of_wall" class="">Введіть товщину стіни, мм:</label>
-                <select name="width_of_wall" id="width_of_wall">
-                    <option name="type_120" value="120" id="hide_show_120">120 мм</option>
-                    <option name="type_250" value="250" id="hide_show_250">250 мм</option>
-                    <option name="type_380" value="380" id="hide_show_380">380 мм</option>
-                    <option name="type_510" value="510" id="hide_show_510">510 мм</option>
-                    <option name="type_640" value="640" id="hide_show_640">640 мм</option>
-                    <option name="type_770" value="770" id="hide_show_770">770 мм</option>
-                    <option name="type_900" value="900" id="hide_show_900">900 мм</option>
-                </select>
-<!--                <input type="text" pattern="[0-9]{,3}" name="width_of_wall" id="width_of_wall" placeholder="510" value="510">-->
+                <input type="text" pattern="[0-9]{,3}" name="width_of_wall" id="width_of_wall" placeholder="510" value="510">
             <div class="btn">
                 <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати перемичку</button>
 <!--                <button type="reset" class="btn_reset">Очистити форму</button>-->
@@ -60,6 +48,7 @@
         $('#hide_show_640').show();
         $('#hide_show_770').show();
         $('#hide_show_900').show();
+        $('#hide_show_1030').show();
     } else {
         $('#type_of_construction_wall').attr('disabled');
         $('#hide_show_type_of_construction_wall').hide();
@@ -70,6 +59,7 @@
         $('#hide_show_640').show();
         $('#hide_show_770').hide();
         $('#hide_show_900').hide();
+        $('#hide_show_1030').hide();
     }
     });
     $("#type_of_wall").trigger("change");

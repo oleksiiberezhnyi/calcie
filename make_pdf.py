@@ -151,8 +151,6 @@ class MakePDF(FPDF):
         self._draw_statement(count_of_lines, 230, 30, self.title3)
         self.make(result_dict)
         self._annotation(text=self.annotation)
-        self.form3.add_page()
-        self._draw_form_3()
         self.form3.output(f'static/{filename}')
 
     def _calculation_count(self, result_dict: dict):
