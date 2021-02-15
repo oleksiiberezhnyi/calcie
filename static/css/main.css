@@ -10,9 +10,9 @@
 }
 html, body {
     background: white;
-    height: calc(100% - 90px);
-    min-height: 740px;
-    max-height: 740px;
+/*    height: calc(100% - 90px);*/
+/*    min-height: 740px; */
+/*    max-height: 740px;*/
 /*    max-width: 640px;*/
     margin: auto;
 }
@@ -39,12 +39,11 @@ nav {
     justify-content: center;
     align-items: center;
     height: 80px;
-    width: calc(100% - 20px);
-    left: 10px;
+    width: 100%;
+    left: 0px;
     padding: 0px 0px 0px 0px;
-    margin: 0px 0px 10px 0px;
+    margin: 0px 0px 5px 0px;
     background: rgba(245,245,245,1);
-    border-radius: 0px;
     border-bottom: solid 2px grey;
 /*    box-shadow: 0px 0px 4px -1px lightslategray;*/
 }
@@ -56,30 +55,25 @@ nav a {
     justify-content: center;
     align-items: center;
     height: 80px;
-    padding: 0px 15px 0px 15px;
-    font-size: 20px;
+    padding: 0px 10px 0px 10px;
+    font-size: 18px;
     font-weight: 400;
     text-transform: uppercase;
     text-decoration: none;
     color: black;
-/*    text-shadow: 0px 1px 1px grey;*/
 }
 nav a:hover {
-    color: white;
-    background: rgba(230,230,230,1);
-    border-radius: 5px;
+    color: black;
+    background: rgba(225,225,225,1);
 }
 .main {
     position: relative;
-    width: calc(100% - 20px);
-    left: 10px;
+    width: 640px;
+    left: 0px;
     height: 100%;
     padding: 0px 0px 0px 0px;
-    margin: 0px 0px 0px 0px;
-    border-radius: 5px;
-    background: rgba(230,230,230,1);
-    box-shadow: 0px 0px 4px -1px lightslategray;
-    color: darkslategray;
+    margin: auto;
+    color: black;
 }
 .main li {
     list-style-image: url("../images/dot.svg");
@@ -100,6 +94,11 @@ nav a:hover {
     text-align-last: left;
     padding: 10px 10px 0px 10px;
 }
+form {
+    width: 640px;
+    margin: auto;
+    margin-bottom: 20px;
+}
 legend {
     display: block;
     text-align: center;
@@ -111,84 +110,83 @@ legend {
 label {
     position: relative;
     display: block;
-    width: calc(100% - 40px);
-    padding: 5px 20px 5px 20px;
-    margin: 5px 20px 5px 20px;
-    font-size: 16px;
+    width: 100%;
+    padding: 5px 0px 5px 0px;
+    margin: auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 18px;
+    font-weight: 500;
 }
 select {
     display: block;
-    width: calc(100% - 40px);
-    padding: 10px 30px 10px 15px;
-    margin: 0px 20px 5px 20px;
-    height: 40px;
+    width: 100%;
+    padding: 0px 10px 0px 10px;
+    margin: auto;
+    height: 50px;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1;
-    color: darkslategray;
+    color: black;
     vertical-align: middle;
     background-color: white;
     background-image: url("../images/select_arrow.svg");
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 16px 12px;
-    border: 1px solid lightslategray;
-    border-radius: 5px;
+    border: 2px solid rgba(225,225,225,1);
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance:none;
+    appearance: none;
 }
 select:focus {
     outline: 0px;
-    box-shadow: 0px 0px 0px 2px lightslategray;
+    box-shadow: 0px 0px 0px 2px rgba(225,255,225,1);
 }
 select:disabled {
-    color:#6c757d;
-    background-color:#e9ecef
+    color: rgba(235,235,235,1);
+    background-color:rgba(250,250,250,1);
 }
-select:-moz-focusring {
-    color:transparent;
-    text-shadow:0px 0px 0px #212529
+select:-moz-focusing {
+    color: transparent;
 }
 input {
     display: block;
-    width: calc(100% - 70px);
-    padding: 0px 15px 0px 15px;
-    margin: 0px 20px 5px 20px;
-    height: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0px 10px 0px 10px;
+    margin: auto;
+    height: 50px;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1;
-    color: darkslategray;
+    color: black;
     vertical-align: middle;
     background-color: white;
-    border: 1px solid lightslategray;
-    border-radius: 5px;
+    border: 2px solid rgba(225,225,225,1);
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance:none;
+    appearance: none;
 }
 input:focus {
     outline: 0px;
-    box-shadow: 0px 0px 0px 2px lightslategray;
+    box-shadow: 0px 0px 0px 2px rgba(225,255,225,1);
 }
 button {
     display: inline-block;
     align: center;
-    width: 140px;
-    height: 60px;
-    margin: 0px 15px 0px 15px;
+    width: 200px;
+    height: 50px;
+    margin: auto;
     font-size: 16px;
     font-weight: 500;
-    line-height: 1.5;
-    color: white;
-    text-shadow: 0px 2px 4px darkslategray;
+    line-height: 1;
+    color: black;
     text-transform: uppercase;
     vertical-align: middle;
-    border-radius: 5px;
 }
 button:active {
-    background-color: lightslategray;
+    background-color: rgba(225,225,225,1);
 }
 .btn {
     display: inline-flex;
@@ -198,111 +196,63 @@ button:active {
     margin: 30px 0px 0px 0px;
 }
 .btn_submit {
-    background-color: darkseagreen;
+    background-color: rgba(205,245,205,1);
 }
 .btn_reset {
-    background-color: darksalmon;
+    background-color: rgba(245,205,205,1);
 }
 .btn_result {
-    background-color: lightsteelblue;
+    background-color: rgba(205,205,245,1);
 }
 .red_text {
     color: red;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 500;
 }
 .footer {
-    position: relative;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    width: calc(100% - 20px);
-    left: 10px;
+    position: fixed;
+    display: block;
+    bottom: 0px;
+    width: 100%;
     padding: 0px 0px 0px 0px;
-    margin: 20px 0px 10px 0px;
-    background: lightslategray;
-    border-radius: 5px;
-    box-shadow: 0px 0px 4px -1px darkslategray;
+    margin: auto;
+    background: rgba(245,245,245,1);
+}
+.footer-text {
+    display: block;
+    width: 640px;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
     color: black;
     font-weight: 100;
     font-size: 12px;
-    text-shadow: 0px 1px 3px white;
 }
-/*
-.form {
-    border-style: solid;
-    padding: 0px;
-    margin: 0px;
-    width: 500px;
+.table {
+    display: block;
+    width: 600px;
+    margin: auto;
+    margin-bottom: 30px;
 }
-.form form {
-    border-style: solid;
-    padding: 0px;
-    margin: 0px;
-}
-.form fieldset {
-    border-style: solid;
-    padding: 0px;
-    margin: 0px;
-}
-.form legend {
-    border-style: solid;
-    padding: 0px;
-    margin: 0px;
-}
-.form p {
-    border-style: solid;
-    padding: 0px;
-    margin: 0px;
-    text-indent: 0px;
-}
-.form label {
-    border-style: solid;
+.col1, .col2, .col3, .col4, .col5, .col6  {
     display: inline-block;
-    padding: 0px;
-    margin: 0px;
-    font-size: 18px;
-    width: 250px;
-    height: 40px;
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 200;
+    line-height: 1;
+    color: black;
+    vertical-align: middle;
 }
-.form select {
-    font-family:"SF Pro Display";
-    font-size: 18px;
-    font-weight: 100;
+.col1-h, .col2-h, .col3-h, .col4-h, .col5-h, .col6-h  {
     display: inline-block;
-    position: absolute;
-    width: 250px;
-    height: 40px;
-    border-style: solid;
-    border-radius: 0px;
-    background: none;
+    width: 100px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: black;
+    vertical-align: middle;
 }
-
-.info {
-    border-style: solid;
-    border-color: blue;
-}
-/*
-.menu-horizontal li:before {
-    position: absolute;
-    top: 100%;
-    content: url("../images/dot.svg");
-    width: 12px;
-}
-*/
-/* As hex codes
-
-.color-primary-0 { color: #2A4F6E }
-.color-primary-1 { color: #E4EFF8 }
-.color-primary-2 { color: #5E7080 }
-.color-primary-3 { color: #05345B }
-.color-primary-4 { color: #000204 }
-
-.rgba-primary-0 { color: rgba(42,79,110,1) }
-.rgba-primary-1 { color: rgba(228,239,248,1) }
-.rgba-primary-2 { color: rgba(94,112,128,1) }
-.rgba-primary-3 { color: rgba(5,52,91,1) }
-.rgba-primary-4 { color: rgba(0,2,4,1) }
-rgba(67, 123, 106, 1)
-*/

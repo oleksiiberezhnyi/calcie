@@ -56,9 +56,23 @@ def index():
     return render_template('index.html', title='Головна сторінка', menu=menu, count=len(requests_dict.get()))
 
 
+@app.route('/clear', methods=['GET', 'POST'])
+def clear():
+    if request.method == 'POST':
+        if request.form['clear'] == 'clear':
+            requests_dict.clear()
+    return render_template(
+        'calculation.html',
+        title='Розрахунки', menu=menu,
+        data=requests_dict.get(),
+        count=len(requests_dict.get())
+    )
+
+
 @app.route('/calculation', methods=['GET', 'POST'])
 def calculation():
     if request.method == 'POST':
+        print(len(requests_dict.get()), requests_dict.get())
         if len(requests_dict.get()) < 10:
             try:
                 requests_dict.add(
@@ -73,7 +87,6 @@ def calculation():
                 flash('Помилка додавання параметрів до списку')
         else:
             flash('Додано максимальну кількість')
-            pass
     return render_template('calculation.html', title='Розрахунки', menu=menu, data=requests_dict.get(), count=len(requests_dict.get()))
 
 
@@ -107,7 +120,6 @@ def result():
         for mark, parameters in requests_dict.get().items():
             package = SelectSerial(parameters)
             if len(package.get_result()) > 0:
-                print(package.get_result())
                 dict_for_pdf[mark] = package.get_result()
             else:
                 continue

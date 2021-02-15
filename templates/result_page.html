@@ -4,9 +4,23 @@
 
 {% endblock %}
 {% block main %}
+<div class="table"><p>
+<div class="col1">Марка</div>
+<div class="col2">Тип стіни</div>
+<div class="col3">Опирання плит</div>
+<div class="col4">Висота цегли, мм</div>
+<div class="col5">Ширина проєму, мм</div>
+<div class="col6">Товщина стіни, мм</div>
     {% for k, v in data.items() %}
-    <p>{{ k }} {{ v[0] }} {{ v[1] }} {{ v[2] }} {{ v[3] }} {{ v[4] }}</p>
+        <p>
+        <div class="col1">{{ k }}</div>
+        <div class="col2">{{ v[0] }}</div>
+        <div class="col3">{{ v[1] }}</div>
+        <div class="col4">{{ v[2] }}</div>
+        <div class="col5">{{ v[3] }}</div>
+        <div class="col6">{{ v[4] }}</div>
     {% endfor %}
+</div>
 <div class="">
     <div class="btn">
         <form>

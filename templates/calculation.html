@@ -27,9 +27,9 @@
                     <option name="type_6" value="65">65 мм</option>
                     <option name="type_7" value="88">88 мм</option>
                 </select>
-            <p><label for="width_of_opening" class="">Введіть ширину проєму, мм:</label>
+            <p><label for="width_of_opening" class="">Введіть ширину проєму, мм: (не більше 3000 мм)</label>
                 <input type="text" pattern="[0-9]{,4}" name="width_of_opening" id="width_of_opening" placeholder="900" value="900">
-            <p><label for="width_of_wall" class="">Введіть товщину стіни, мм:</label>
+            <p><label for="width_of_wall" class="">Виберіть товщину стіни, мм: (від 120 мм до 900 мм)</label>
                 <select name="width_of_wall" id="width_of_wall">
                     <option name="type_120" value="120" id="hide_show_120">120 мм</option>
                     <option name="type_250" value="250" id="hide_show_250">250 мм</option>
@@ -41,36 +41,43 @@
                 </select>
 <!--                <input type="text" pattern="[0-9]{,3}" name="width_of_wall" id="width_of_wall" placeholder="510" value="510">-->
             <div class="btn">
-                <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати перемичку</button>
-<!--                <button type="reset" class="btn_reset">Очистити форму</button>-->
-                <button type="submit" class="btn_result" formmethod="get" formaction="/result_page">Переглянути результат</button>
+                <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати</button>
+                <button type="submit" class="btn_reset" name="clear" formmethod="post" formaction="/clear" value="clear">Очистити</button>
+                <button type="submit" class="btn_result" formmethod="post" formaction="/result">Результат
+                    <span class="red_text">
+                        {% if count > 0 %}
+                        &#8194;{{ count }}
+                        {% endif %}
+                    </span>
+                </button>
             </div>
     </fieldset>
 </form>
+    <p>
+<div class="col1-h">Марка</div>
+<div class="col2-h">Тип стіни</div>
+<div class="col3-h">Опирання плит</div>
+<div class="col4-h">Висота цегли, мм</div>
+<div class="col5-h">Ширина проєму, мм</div>
+<div class="col6-h">Товщина стіни, мм</div>
+    {% for k, v in data.items() %}
+        <p>
+        <div class="col1">{{ k }}</div>
+        <div class="col2">{{ v[0] }}</div>
+        <div class="col3">{{ v[1] }}</div>
+        <div class="col4">{{ v[2] }}</div>
+        <div class="col5">{{ v[3] }}</div>
+        <div class="col6">{{ v[4] }}</div>
+    {% endfor %}
 </div>
 <script type="text/javascript">
     $("#type_of_wall").change(function() {
     if ($(this).val() == "Несуча стіна") {
         $('#type_of_construction_wall').removeAttr('disabled');
         $('#hide_show_type_of_construction_wall').show();
-        $('#hide_show_120').hide();
-        $('#hide_show_250').show();
-        $('#hide_show_380').show();
-        $('#hide_show_510').show();
-        $('#hide_show_640').show();
-        $('#hide_show_770').show();
-        $('#hide_show_900').show();
     } else {
         $('#type_of_construction_wall').attr('disabled');
         $('#hide_show_type_of_construction_wall').hide();
-        $('#hide_show_120').show();
-        $('#hide_show_250').show();
-        $('#hide_show_380').show();
-        $('#hide_show_510').show();
-        $('#hide_show_640').show();
-        $('#hide_show_770').hide();
-        $('#hide_show_900').hide();
-    }
     });
     $("#type_of_wall").trigger("change");
 </script>
