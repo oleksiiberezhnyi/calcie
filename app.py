@@ -28,7 +28,7 @@ class MakeRequestDict:
         height_of_bricks,
         width_of_opening,
         width_of_wall
-    ):
+        ):
         self.requests_dict[f'{self.position_mark}-{self.number_mark}'] = [
             type_of_wall,
             type_of_construction_wall,
@@ -82,11 +82,11 @@ def calculation():
                     request.form['width_of_opening'],
                     request.form['width_of_wall']
                 )
-                flash('Параметри успішно додано до списку')
+                flash('Параметри успішно додано до списку', 'flash_ok')
             except:
-                flash('Помилка додавання параметрів до списку')
+                flash('Помилка додавання параметрів до списку', 'flash_error')
         else:
-            flash('Додано максимальну кількість')
+            flash('Додано максимальну кількість', 'flash_error')
     return render_template('calculation.html', title='Розрахунки', menu=menu, data=requests_dict.get(), count=len(requests_dict.get()))
 
 

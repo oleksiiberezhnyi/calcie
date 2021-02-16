@@ -25,7 +25,6 @@
                     {% for m in menu %}
                         <li><a class="" href="{{ m.url }}">{{ m.name }}</a></li>
                     {% endfor %}
-                        <li><a class="" href="/result_page">Результати</a></li>
                     </ul>
                 </nav>
             </header>
@@ -35,11 +34,13 @@
             {% block main %}
             {% endblock %}
         </div>
-        <div style="height:50px"></div>
+<div style="height:50px"></div>
     {% block footer %}
         <footer class="footer">
             <span class="footer-text">Oleksii Berezhnyi. Beetroot Academy. January 2021</span>
         </footer>
+    {% endblock %}
+    {% block js %}
     {% endblock %}
 </body>
 </html>

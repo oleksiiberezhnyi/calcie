@@ -103,7 +103,7 @@ legend {
     display: block;
     text-align: center;
     width: 100%;
-    padding: 20px 0px 0px 0px;
+    padding: 30px 0px 0px 0px;
     font-size: 24px;
     font-weight: 500;
 }
@@ -175,7 +175,7 @@ input:focus {
 button {
     display: inline-block;
     align: center;
-    width: 200px;
+    width: 180px;
     height: 50px;
     margin: auto;
     font-size: 16px;
@@ -238,21 +238,49 @@ button:active {
 .col1, .col2, .col3, .col4, .col5, .col6  {
     display: inline-block;
     width: 100px;
-    height: 30px;
     text-align: center;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 200;
     line-height: 1;
     color: black;
     vertical-align: middle;
 }
-.col1-h, .col2-h, .col3-h, .col4-h, .col5-h, .col6-h  {
-    display: inline-block;
-    width: 100px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.2;
+.col-h {
+    width: 640px;
+    background-color: rgba(245,245,245,1);
+    padding: 5px 0px 5px 0px;
+}
+.note {
+    font-size: 12px;
+    font-weight: 100;
+}
+.flash_ok {
+    position: absolute;
+    display: block;
+    left: calc(50% - 100px);
+    background-color: rgba(225,255,225,0.5);
     color: black;
+    font-size: 12px;
+    font-weight: 100;
+    width: 200px;
+    height: 15px;
+    margin: auto;
+    padding: 5px 10px 5px 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+.flash_error {
+    position: absolute;
+    display: block;
+    left: calc(50% - 100px);
+    background-color: rgba(255,225,225,0.5);
+    color: black;
+    font-size: 12px;
+    font-weight: 100;
+    width: 200px;
+    height: 15px;
+    margin: auto;
+    padding: 5px 10px 5px 10px;
+    text-align: center;
     vertical-align: middle;
 }

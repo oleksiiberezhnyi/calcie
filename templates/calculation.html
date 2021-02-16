@@ -5,79 +5,88 @@
 {% endblock %}
 {% block main %}
 <div class="">
-    {% for flash_message in get_flashed_messages() %}
-    <p>{{ flash_message }}</p>
+    {% for category, flash_message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ flash_message }}</div>
     {% endfor %}
-<form>
-    <fieldset>
-        <legend>Задайте параметри</legend>
-            <p><label for="type_of_wall" class="">Виберіть тип стіни:</label>
-                <select name="type_of_wall" id="type_of_wall" class="">
-                    <option name="type_3" value="Несуча стіна">Несуча стіна</option>
-                    <option name="type_2" value="Самонесуча стіна">Самонесуча стіна</option>
-                    <option name="type_1" value="Перегородка">Перегородка</option>
-                </select>
-            <p id="hide_show_type_of_construction_wall"><label for="type_of_construction_wall" class="" >Виберіть опирання плит:</label>
-                <select name="type_of_construction_wall" id="type_of_construction_wall">
-                    <option name="type_4" value="Одна">Опирання з однієї сторони</option>
-                    <option name="type_5" value="Дві">Опирання з двох сторін</option>
-                </select>
-            <p id="hide_show_height_of_bricks"><label for="height_of_bricks" class="">Виберіть висоту цегли:</label>
-                <select name="height_of_bricks" id="height_of_bricks">
-                    <option name="type_6" value="65">65 мм</option>
-                    <option name="type_7" value="88">88 мм</option>
-                </select>
-            <p><label for="width_of_opening" class="">Введіть ширину проєму, мм: (не більше 3000 мм)</label>
-                <input type="text" pattern="[0-9]{,4}" name="width_of_opening" id="width_of_opening" placeholder="900" value="900">
-            <p><label for="width_of_wall" class="">Виберіть товщину стіни, мм: (від 120 мм до 900 мм)</label>
-                <select name="width_of_wall" id="width_of_wall">
-                    <option name="type_120" value="120" id="hide_show_120">120 мм</option>
-                    <option name="type_250" value="250" id="hide_show_250">250 мм</option>
-                    <option name="type_380" value="380" id="hide_show_380">380 мм</option>
-                    <option name="type_510" value="510" id="hide_show_510">510 мм</option>
-                    <option name="type_640" value="640" id="hide_show_640">640 мм</option>
-                    <option name="type_770" value="770" id="hide_show_770">770 мм</option>
-                    <option name="type_900" value="900" id="hide_show_900">900 мм</option>
-                </select>
-<!--                <input type="text" pattern="[0-9]{,3}" name="width_of_wall" id="width_of_wall" placeholder="510" value="510">-->
-            <div class="btn">
-                <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати</button>
-                <button type="submit" class="btn_reset" name="clear" formmethod="post" formaction="/clear" value="clear">Очистити</button>
-                <button type="submit" class="btn_result" formmethod="post" formaction="/result">Результат
-                    <span class="red_text">
-                        {% if count > 0 %}
-                        &#8194;{{ count }}
-                        {% endif %}
-                    </span>
-                </button>
-            </div>
-    </fieldset>
-</form>
-    <p>
-<div class="col1-h">Марка</div>
-<div class="col2-h">Тип стіни</div>
-<div class="col3-h">Опирання плит</div>
-<div class="col4-h">Висота цегли, мм</div>
-<div class="col5-h">Ширина проєму, мм</div>
-<div class="col6-h">Товщина стіни, мм</div>
+    <form>
+        <fieldset>
+            <legend>Підбір серійних перемичок</legend>
+                <p><label for="type_of_wall" class="">Виберіть тип стіни:</label>
+                    <select name="type_of_wall" id="type_of_wall" class="">
+                        <option name="type_1" value="Несуча стіна">Несуча стіна</option>
+                        <option name="type_2" value="Самонесуча стіна">Самонесуча стіна</option>
+                        <option name="type_3" value="Перегородка">Перегородка</option>
+                    </select>
+                <p id="hide_show_type_of_construction_wall"><label for="type_of_construction_wall" class="" >Виберіть опирання плит:</label>
+                    <select name="type_of_construction_wall" id="type_of_construction_wall">
+                        <option name="type_5" value="Одна">Опирання з однієї сторони</option>
+                        <option name="type_6" value="Дві">Опирання з двох сторін</option>
+                        <option name="type_4" value="Немає" id="disable1" disabled>Без опирання плит перекриття</option>
+                    </select>
+                <p><label for="height_of_bricks" class="">Виберіть висоту цегли:</label>
+                    <select name="height_of_bricks" id="height_of_bricks">
+                        <option name="type_7" value="65">65 мм</option>
+                        <option name="type_8" value="88">88 мм</option>
+                    </select>
+                <p><label for="width_of_opening" class="">Введіть ширину проєму, мм:<span class="note"> (не більше 3000 мм)</span></label>
+                    <input type="text" pattern="[0-9]{,4}" name="width_of_opening" id="width_of_opening" placeholder="900" value="900">
+                <p><label for="width_of_wall" class="">Виберіть товщину стіни, мм:<span class="note"> (від 120 мм до 900 мм)</span></label>
+                    <select name="width_of_wall" id="width_of_wall">
+                        <option name="type_120" value="120" id="hide_show_120">120 мм</option>
+                        <option name="type_250" value="250" id="hide_show_250">250 мм</option>
+                        <option name="type_380" value="380" id="hide_show_380">380 мм</option>
+                        <option name="type_510" value="510" id="hide_show_510">510 мм</option>
+                        <option name="type_640" value="640" id="hide_show_640">640 мм</option>
+                        <option name="type_770" value="770" id="hide_show_770">770 мм</option>
+                        <option name="type_900" value="900" id="hide_show_900">900 мм</option>
+                    </select>
+                <div class="btn">
+                    <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати</button>
+                    <button type="submit" class="btn_reset" name="clear" formmethod="post" formaction="/clear" value="clear">Очистити</button>
+                    <button type="submit" class="btn_result" formmethod="post" formaction="/result">Результат
+                        <span class="red_text">
+                            {% if count > 0 %}
+                            &#8194;{{ count }}
+                            {% endif %}
+                        </span>
+                    </button>
+                </div>
+        </fieldset>
+    </form>
+    <div class="col-h">
+        <div class="col1">Марка</div>
+        <div class="col2">Тип стіни</div>
+        <div class="col3">Опирання плит</div>
+        <div class="col4">Висота цегли, мм</div>
+        <div class="col5">Ширина проєму, мм</div>
+        <div class="col6">Товщина стіни, мм</div>
+    </div>
     {% for k, v in data.items() %}
-        <p>
         <div class="col1">{{ k }}</div>
         <div class="col2">{{ v[0] }}</div>
+    {% if v[0] == 'Самонесуча стіна' or v[0] == 'Перегородка' %}
+        <div class="col3">Немає</div>
+    {% else %}
         <div class="col3">{{ v[1] }}</div>
+    {% endif %}
         <div class="col4">{{ v[2] }}</div>
         <div class="col5">{{ v[3] }}</div>
         <div class="col6">{{ v[4] }}</div>
     {% endfor %}
 </div>
+{% endblock %}
+{% block js %}
 <script type="text/javascript">
     $("#type_of_wall").change(function() {
     if ($(this).val() == "Несуча стіна") {
         $('#type_of_construction_wall').removeAttr('disabled');
+        $('#disable1').attr('disabled');
         $('#hide_show_type_of_construction_wall').show();
     } else {
         $('#type_of_construction_wall').attr('disabled');
+        $('#disable1').removeAttr('disabled');
         $('#hide_show_type_of_construction_wall').hide();
+    }
     });
     $("#type_of_wall").trigger("change");
 </script>
