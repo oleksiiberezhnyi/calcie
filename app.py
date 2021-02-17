@@ -72,7 +72,6 @@ def clear():
 @app.route('/calculation', methods=['GET', 'POST'])
 def calculation():
     if request.method == 'POST':
-        print(len(requests_dict.get()), requests_dict.get())
         if len(requests_dict.get()) < 10:
             try:
                 requests_dict.add(
