@@ -21,7 +21,7 @@
                     <select name="type_of_construction_wall" id="type_of_construction_wall">
                         <option name="type_5" value="Одна">Опирання з однієї сторони</option>
                         <option name="type_6" value="Дві">Опирання з двох сторін</option>
-                        <option name="type_4" value="Немає" id="disable1" disabled>Без опирання плит перекриття</option>
+                        <option name="type_4" value="Немає" id="disable1">Без опирання плит перекриття</option>
                     </select>
                 <p><label for="height_of_bricks" class="">Виберіть висоту цегли:</label>
                     <select name="height_of_bricks" id="height_of_bricks">
@@ -79,11 +79,9 @@
 <script type="text/javascript">
     $("#type_of_wall").change(function() {
     if ($(this).val() == "Несуча стіна") {
-        $('#type_of_construction_wall').removeAttr('disabled');
         $('#disable1').attr('disabled');
         $('#hide_show_type_of_construction_wall').show();
     } else {
-        $('#type_of_construction_wall').attr('disabled');
         $('#disable1').removeAttr('disabled');
         $('#hide_show_type_of_construction_wall').hide();
     }
