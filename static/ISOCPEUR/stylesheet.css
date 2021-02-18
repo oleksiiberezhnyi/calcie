@@ -5,9 +5,3 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'ISOCPEUR';
-    src: local('ISOCPEUR'), url('ISOCPEUI.TTF') format('truetype');
-    font-weight: 500;
-    font-style: italic;
-}

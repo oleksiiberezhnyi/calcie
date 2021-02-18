@@ -2,6 +2,7 @@ from fpdf import FPDF
 from collections import Counter
 from datetime import datetime
 from serial_beam import Catalog
+import os
 
 
 
@@ -130,19 +131,39 @@ result_dict = {
     ]
 }
 
+
 class MakePDF(FPDF):
+
     annotation = 'Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію'
     title1 = 'Специфікація пакетів перемичок'
     title2 = 'Специфікація елементів перемичок'
     title3 = 'Відомість перемичок'
 
+
+
     def __init__(self, result_dict: dict, filename: str):
         super().__init__()
+        # FPDF_FONT_DIR = os.walk(os.path.curdir)
+
+        # def find_files(filename, search_path):
+        #     result = []
+        #
+        #     # Wlaking top-down from the root
+        #     for root, dir, files in os.walk(search_path):
+        #         if filename in files:
+        #             result.append(os.path.join(root, filename))
+        #     return result
+        # print(find_files('ISOCPEUR.ttf', os.path.curdir))
+        # print(FPDF_FONT_DIR)
         count_of_lines = len(result_dict)
         if count_of_lines > 10:
             count_of_lines = 10
         self.form3 = FPDF(orientation='L', unit='mm', format='A3')
         self.form3.add_page()
+        # try:
+        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
+        # except:
+        #     self.form3.add_font('iso', '', 'app/static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self._draw_form_3()
         self._draw_specification_for_package(result_dict, 20, 30, self.title1)
         self._count_dict = dict()
@@ -177,7 +198,6 @@ class MakePDF(FPDF):
         if i < 5:
             x0 = 265
             y0 = 67 + 4 * 8 * i
-            self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
             self.form3.set_font('iso', '', 11)
             self.form3.text(x0 - 29, y0 - 5, mark)
             for nested_dict in package:
@@ -187,7 +207,6 @@ class MakePDF(FPDF):
         else:
             x0 = 355
             y0 = 67 + 4 * 8 * (i - 5)
-            self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
             self.form3.set_font('iso', '', 11)
             self.form3.text(x0 - 29, y0 - 5, mark)
             for nested_dict in package:
@@ -225,7 +244,6 @@ class MakePDF(FPDF):
         self.form3.line(x0 + b / 2, y0 - h + 1.25, x0 + b / 4, y0 - h - 5)
         self.form3.line(x0 + b / 4, y0 - h - 5, x0 + b / 4 + 4, y0 - h - 5)
         self.form3.ellipse(x0 + b / 2 - 0.5, y0 - h + 0.75, 1, 1, 'F')
-        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_font('iso', '', 11)
         self.form3.text(x0 + b / 4 + 0.5, y0 - h - 5.5, position)
 
@@ -257,7 +275,6 @@ class MakePDF(FPDF):
         self.form3.line(230, y0 + 272, 295, y0 + 272)
         self.form3.line(230, y0 + 277, 295, y0 + 277)
         self.form3.line(230, y0 + 282, 295, y0 + 282)
-        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_font('iso', '', 11)
         self.form3.text(233, y0 + 255.75, 'Зм.')
         self.form3.text(240.75, y0 + 255.75, 'Кільк.')
@@ -287,7 +304,6 @@ class MakePDF(FPDF):
         count_of_lines = len(result_dict) + 2
         x0 = x
         y0 = y
-        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_line_width(0.5)
         self.form3.line(x0 + 0, y0 + 0, x0 + 180, y0 + 0)
         self.form3.line(x0 + 0, y0 + 15, x0 + 180, y0 + 15)
@@ -333,7 +349,6 @@ class MakePDF(FPDF):
         count_of_lines = len(count_dict) + 2
         x0 = x
         y0 = y
-        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_line_width(0.5)
         self.form3.line(x0 + 0, y0 + 0, x0 + 180, y0 + 0)
         self.form3.line(x0 + 0, y0 + 15, x0 + 180, y0 + 15)
@@ -371,7 +386,6 @@ class MakePDF(FPDF):
             self.form3.line(x0 + 0, y, x0 + 180, y)
             i += 1
             y += 8
-        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_font('iso', '', 14)
         self.form3.text(x0 + 65, y0 - 5, title)
         self.form3.set_font('iso', '', 11)
@@ -389,7 +403,6 @@ class MakePDF(FPDF):
         self.form3.set_line_width(0.5)
         self.form3.line(x0 + 0, y0 + 0, x0 + 90, y0 + 0)
         self.form3.line(x0 + 0, y0 + 15, x0 + 90, y0 + 15)
-        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         if count_of_lines <= 5:
             self.form3.set_font('iso', '', 14)
             self.form3.text(x0 + 25, y0 - 5, title)
@@ -443,7 +456,6 @@ class MakePDF(FPDF):
             y += 8 * 4
 
     def _annotation(self, text: str = 'Примітка', x=30, y=257):
-        self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self.form3.set_font('iso', '', 11)
         self.form3.text(x, y, text)
 

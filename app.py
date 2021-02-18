@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, flash
 from make_pdf import MakePDF
 from select_serial import SelectSerial
-import time
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = b'sdlajkfhlsadhf;'
@@ -13,6 +13,7 @@ menu = [{'name': 'Головна', 'url': '/'},
         {'name': 'Контакти', 'url': '/about'}
         ]
 
+print(os.path.curdir)
 
 class MakeRequestDict:
 
