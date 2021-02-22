@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block script %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/form_serial.js') }}"></script>
 
 {% endblock %}
 {% block main %}
@@ -12,16 +13,19 @@
         <fieldset>
             <legend>Підбір серійних перемичок</legend>
                 <p><label for="type_of_wall" class="">Виберіть тип стіни:</label>
-                    <select name="type_of_wall" id="type_of_wall" class="">
-                        <option name="type_1" value="Несуча стіна">Несуча стіна</option>
-                        <option name="type_2" value="Самонесуча стіна">Самонесуча стіна</option>
-                        <option name="type_3" value="Перегородка">Перегородка</option>
+                    <select name="type_of_wall" id="type_of_wall" class="" onchange="start(this,type_of_construction_wall,width_of_wall)">
+                        <script type="text/javascript">
+                            set_type_of_wall(this);
+                        </script>
+<!--                        <option name="type_1" value="Несуча стіна">Несуча стіна</option>-->
+<!--                        <option name="type_2" value="Самонесуча стіна">Самонесуча стіна</option>-->
+<!--                        <option name="type_3" value="Перегородка">Перегородка</option>-->
                     </select>
                 <p id="hide_show_type_of_construction_wall"><label for="type_of_construction_wall" class="" >Виберіть опирання плит:</label>
-                    <select name="type_of_construction_wall" id="type_of_construction_wall">
-                        <option name="type_5" value="Одна">Опирання з однієї сторони</option>
-                        <option name="type_6" value="Дві">Опирання з двох сторін</option>
-                        <option name="type_4" value="Немає" id="disable1">Без опирання плит перекриття</option>
+                    <select name="type_of_construction_wall" id="type_of_construction_wall" disabled="disabled" onchange="set_width_of_wall(this,width_of_wall)">
+<!--                        <option name="type_5" value="Одна">Опирання з однієї сторони</option>-->
+<!--                        <option name="type_6" value="Дві">Опирання з двох сторін</option>-->
+<!--                        <option name="type_4" value="Немає" id="disable1">Без опирання плит перекриття</option>-->
                     </select>
                 <p><label for="height_of_bricks" class="">Виберіть висоту цегли:</label>
                     <select name="height_of_bricks" id="height_of_bricks">
@@ -30,15 +34,15 @@
                     </select>
                 <p><label for="width_of_opening" class="">Введіть ширину проєму, мм:<span class="note"> (не більше 3000 мм)</span></label>
                     <input type="text" pattern="[0-9]{,4}" name="width_of_opening" id="width_of_opening" placeholder="900" value="900">
-                <p><label for="width_of_wall" class="">Виберіть товщину стіни, мм:<span class="note"> (від 120 мм до 900 мм)</span></label>
-                    <select name="width_of_wall" id="width_of_wall">
-                        <option name="type_120" value="120" id="hide_show_120">120 мм</option>
-                        <option name="type_250" value="250" id="hide_show_250">250 мм</option>
-                        <option name="type_380" value="380" id="hide_show_380">380 мм</option>
-                        <option name="type_510" value="510" id="hide_show_510">510 мм</option>
-                        <option name="type_640" value="640" id="hide_show_640">640 мм</option>
-                        <option name="type_770" value="770" id="hide_show_770">770 мм</option>
-                        <option name="type_900" value="900" id="hide_show_900">900 мм</option>
+                <p><label for="width_of_wall" class="">Виберіть товщину стіни, мм:</label>
+                    <select name="width_of_wall" id="width_of_wall" disabled="disabled">
+<!--                        <option name="type_120" value="120" id="hide_show_120">120 мм</option>-->
+<!--                        <option name="type_250" value="250" id="hide_show_250">250 мм</option>-->
+<!--                        <option name="type_380" value="380" id="hide_show_380">380 мм</option>-->
+<!--                        <option name="type_510" value="510" id="hide_show_510">510 мм</option>-->
+<!--                        <option name="type_640" value="640" id="hide_show_640">640 мм</option>-->
+<!--                        <option name="type_770" value="770" id="hide_show_770">770 мм</option>-->
+<!--                        <option name="type_900" value="900" id="hide_show_900">900 мм</option>-->
                     </select>
                 <div class="btn">
                     <button type="submit" class="btn_submit" formmethod="post" formaction="/calculation">Додати</button>

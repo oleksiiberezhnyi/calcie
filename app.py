@@ -115,7 +115,7 @@ def result():
     global file_number
     global file_name
     if request.method == 'POST':
-        file_number += 1
+        # file_number += 1
         file_name = f'files/result_{file_number}.pdf'
         for mark, parameters in requests_dict.get().items():
             package = SelectSerial(parameters)
@@ -131,6 +131,10 @@ def result():
 def page_not_found(error):
     return render_template('page404.html', title='Сторінка не знайдена', menu=menu, count=len(requests_dict.get()))
 
+
+@app.route('/test', methods=['POST', 'GET'])
+def test():
+    return render_template('test.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

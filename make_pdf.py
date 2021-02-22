@@ -2,8 +2,6 @@ from fpdf import FPDF
 from collections import Counter
 from datetime import datetime
 from serial_beam import Catalog
-import os
-
 
 
 result_dict = {
@@ -139,31 +137,14 @@ class MakePDF(FPDF):
     title2 = 'Специфікація елементів перемичок'
     title3 = 'Відомість перемичок'
 
-
-
     def __init__(self, result_dict: dict, filename: str):
         super().__init__()
-        # FPDF_FONT_DIR = os.walk(os.path.curdir)
-
-        # def find_files(filename, search_path):
-        #     result = []
-        #
-        #     # Wlaking top-down from the root
-        #     for root, dir, files in os.walk(search_path):
-        #         if filename in files:
-        #             result.append(os.path.join(root, filename))
-        #     return result
-        # print(find_files('ISOCPEUR.ttf', os.path.curdir))
-        # print(FPDF_FONT_DIR)
         count_of_lines = len(result_dict)
         if count_of_lines > 10:
             count_of_lines = 10
         self.form3 = FPDF(orientation='L', unit='mm', format='A3')
         self.form3.add_page()
-        # try:
         self.form3.add_font('iso', '', 'static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
-        # except:
-        #     self.form3.add_font('iso', '', 'app/static/ISOCPEUR/ISOCPEUR.ttf', uni=True)
         self._draw_form_3()
         self._draw_specification_for_package(result_dict, 20, 30, self.title1)
         self._count_dict = dict()
@@ -202,7 +183,7 @@ class MakePDF(FPDF):
             self.form3.text(x0 - 29, y0 - 5, mark)
             for nested_dict in package:
                 position = str(self._count_dict.get(list(nested_dict.keys())[0])['position'])
-                self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0, position)
+                self._draw_serial_beam(list(nested_dict.values())[0], x0, y0, position)
                 x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
         else:
             x0 = 355
@@ -211,31 +192,51 @@ class MakePDF(FPDF):
             self.form3.text(x0 - 29, y0 - 5, mark)
             for nested_dict in package:
                 position = str(self._count_dict.get(list(nested_dict.keys())[0])['position'])
-                self._draw_serial_beam(list(nested_dict.keys())[0], x0, y0, position)
+                self._draw_serial_beam(list(nested_dict.values())[0], x0, y0, position)
                 x0 += nested_dict[list(nested_dict.keys())[0]]['width, m'] * 1000 / scale + 10 / scale
         i += 1
 
-    def _draw_serial_beam(self, mark: str, x=260, y=70, position: str = '00'):
+    def _draw_serial_beam(self, parameters: dict, x=260, y=70, position: str = '00'):
         x0 = x
         y0 = y
         scale = 20
-        if mark[0] == '1':
-            b = 120/scale
-            h = 65/scale
-        elif mark[0] == '2':
-            b = 120/scale
-            h = 140/scale
-        elif mark[0] == '3':
-            b = 120/scale
-            h = 220/scale
-        elif mark[0] == '4':
-            b = 120/scale
-            h = 290/scale
-        elif mark[0] == '5':
-            b = 250/scale
-            h = 220/scale
-        else:
-            return f'Помилка перерізу балки'
+        b = parameters["width, m"] * 1000 / scale
+        h = parameters["height, m"] * 1000 / scale
+        # if mark[0:mark.find("П")] == '1':
+        #     b = 120/scale
+        #     h = 65/scale
+        # elif mark[0:mark.find("П")] == '2':
+        #     b = 120/scale
+        #     h = 140/scale
+        # elif mark[0:mark.find("П")] == '3':
+        #     b = 120/scale
+        #     h = 220/scale
+        # elif mark[0:mark.find("П")] == '4':
+        #     b = 120/scale
+        #     h = 290/scale
+        # elif mark[0:mark.find("П")] == '5':
+        #     b = 250/scale
+        #     h = 220/scale
+        # elif mark[0:mark.find("П")] == '5':
+        #     b = 250/scale
+        #     h = 220/scale
+        # elif mark[0:mark.find("П")] == '6':
+        #     b = 250 / scale
+        #     h = 220 / scale
+        # elif mark[0:mark.find("П")] == '7':
+        #     b = 250 / scale
+        #     h = 220 / scale
+        # elif mark[0:mark.find("П")] == '8':
+        #     b = 250 / scale
+        #     h = 220 / scale
+        # elif mark[0:mark.find("П")] == '9':
+        #     b = 250 / scale
+        #     h = 220 / scale
+        # elif mark[0:mark.find("П")] == '10':
+        #     b = 250 / scale
+        #     h = 220 / scale
+        # else:
+        #     return f'Помилка перерізу балки'
         self.form3.set_line_width(0.5)
         self.form3.rect(x0, y0, b, -h)
         self.form3.set_line_width(0.05)
@@ -298,7 +299,7 @@ class MakePDF(FPDF):
         self.form3.image('static/images/logo_dark.png', 366.25, y0 + 273.25, 42.5, 12.5)
         
     def _draw_specification_for_package(self, result_dict: dict, x=230, y=30, title: str = 'Специфікація'):
-        keys_list =[]
+        keys_list = []
         for key in result_dict.keys():
             keys_list.append(key)
         count_of_lines = len(result_dict) + 2
@@ -365,20 +366,25 @@ class MakePDF(FPDF):
         while i < count_of_lines:
             try:
                 self.form3.set_font('iso', '', 11)
-                self.form3.text(x0 + 6.5, y0 + 20.25 + i * 8,
+                self.form3.text(
+                    x0 + 6.5, y0 + 20.25 + i * 8,
                     str(count_dict[keys_list[i]]['position'])
                 )
-                self.form3.text(x0 + 16, y0 + 20.25 + i * 8,
+                self.form3.text(
+                    x0 + 16, y0 + 20.25 + i * 8,
                     'ДСТУ Б В.2.6-55:2008'
                 )
                 self.form3.text(x0 + 76, y0 + 20.25 + i * 8, keys_list[i])
-                self.form3.text(x0 + 139, y0 + 20.25 + i * 8,
+                self.form3.text(
+                    x0 + 139, y0 + 20.25 + i * 8,
                     str(count_dict[keys_list[i]]['count'])
                 )
-                self.form3.text(x0 + 146.5, y0 + 20.25 + i * 8,
+                self.form3.text(
+                    x0 + 146.5, y0 + 20.25 + i * 8,
                     str(round(catalog.get_weight(keys_list[i]) * 1000 / 9.8, 3))
                 )
-                self.form3.text(x0 + 161, y0 + 20.25 + i * 8,
+                self.form3.text(
+                    x0 + 161, y0 + 20.25 + i * 8,
                     f"{str(round(catalog.get_weight(keys_list[i]) * 1000 / 9.8 * count_dict[keys_list[i]]['count'], 3))} кг"
                 )
             except IndexError:
@@ -427,21 +433,8 @@ class MakePDF(FPDF):
             self.form3.line(x0 + 90, y0 + 15, x0 + 180, y0 + 15)
             self.form3.line(x0 + 110, y0 + 0, x0 + 110, y0 + 15 + (count_of_lines - 5) * 8 * 4)
             self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + (count_of_lines - 5) * 8 * 4)
-        # else:
-        #     self.form3.set_font('iso', '', 14)
-        #     self.form3.text(x0 + 70, y0 - 5, title)
-        #     self.form3.set_font('iso', '', 11)
-        #     self.form3.text(x0 + 5, y0 + 9.25, 'Марка')
-        #     self.form3.text(x0 + 42, y0 + 9.25, 'Схема перерізу')
-        #     self.form3.text(x0 + 95, y0 + 9.25, 'Марка')
-        #     self.form3.text(x0 + 132, y0 + 9.25, 'Схема перерізу')
-        #     self.form3.line(x0 + 0, y0 + 0, x0 + 0, y0 + 15 + 5 * 8 * 4)
-        #     self.form3.line(x0 + 20, y0 + 0, x0 + 20, y0 + 15 + 5 * 8 * 4)
-        #     self.form3.line(x0 + 90, y0 + 0, x0 + 90, y0 + 15 + 5 * 8 * 4)
-        #     self.form3.line(x0 + 90, y0 + 0, x0 + 180, y0 + 0)
-        #     self.form3.line(x0 + 90, y0 + 15, x0 + 180, y0 + 15)
-        #     self.form3.line(x0 + 110, y0 + 0, x0 + 110, y0 + 15 + 5 * 8 * 4)
-        #     self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + 5 * 8 * 4)
+        else:
+            pass
         self.form3.set_line_width(0.05)
         y = y0 + 47
         i = 0
@@ -458,6 +451,7 @@ class MakePDF(FPDF):
     def _annotation(self, text: str = 'Примітка', x=30, y=257):
         self.form3.set_font('iso', '', 11)
         self.form3.text(x, y, text)
+
 
 if __name__ == '__main__':
     MakePDF(result_dict, 'files/result_test.pdf')
