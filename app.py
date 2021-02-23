@@ -1,10 +1,19 @@
 from flask import Flask, render_template, url_for, request, flash
 from make_pdf import MakePDF
 from select_serial import SelectSerial
-import os
+from flask_caching import Cache
 
+config_cache = {
+    "DEBUG": True,
+    "CACHE_TYPE": "simple",
+    "CACHE_DEFAULT_TIMEOUT": 1
+}
+cache = Cache(config=config_cache)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = b'sdlajkfhlsadhf;'
+cache.init_app(app)
+
+
 
 
 menu = [{'name': 'Головна', 'url': '/'},
@@ -13,9 +22,9 @@ menu = [{'name': 'Головна', 'url': '/'},
         {'name': 'Контакти', 'url': '/about'}
         ]
 
-print(os.path.curdir)
 
 class MakeRequestDict:
+
 
     def __init__(self):
         self.requests_dict = dict()
@@ -108,9 +117,14 @@ def result_page():
 def about():
     return render_template('about.html', title='Про нас', menu=menu, count=len(requests_dict.get()))
 
+@app.after_request
+def add_header(response):
+    response.headers["Cache-Control"] = "no-cache"
+    return response
 
 @app.route('/result', methods=['POST'])
 def result():
+    cache.clear()
     dict_for_pdf = dict()
     global file_number
     global file_name

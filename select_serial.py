@@ -22,10 +22,10 @@ class SelectSerial:
         elif self._type_of_wall == 'Самонесуча стіна':
             self._calculation_construction_wall_non_load()
         elif self._type_of_wall == 'Несуча стіна'\
-                and self._type_of_construction_wall == 'Одна':
+                and self._type_of_construction_wall == 'Опирання з однієї сторони':
             self._calculation_construction_wall_one_side()
         elif self._type_of_wall == 'Несуча стіна'\
-                and self._type_of_construction_wall == 'Дві':
+                and self._type_of_construction_wall == 'Опирання з двох сторін':
             self._calculation_construction_wall_two_side()
 
     def _calculation_partition_wall(self):
@@ -97,9 +97,9 @@ class SelectIndividual:
         self._selector()
 
     def _selector(self):
-        if self._type_of_wall == 'Несуча стіна' and self._type_of_construction_wall == 'Одна':
+        if self._type_of_wall == 'Несуча стіна' and self._type_of_construction_wall == 'Опирання з однієї сторони':
             max_loads = 0
-        elif self._type_of_wall == 'Несуча стіна' and self._type_of_construction_wall == 'Дві':
+        elif self._type_of_wall == 'Несуча стіна' and self._type_of_construction_wall == 'Опирання з двох сторін':
             max_loads = 0
         else:
             max_loads = 17.64 * self._width_of_wall * self._width_of_opening
@@ -109,8 +109,8 @@ if __name__ == '__main__':
 
     s1 = SelectSerial(['Перегородка', 'Немає', '65', '1000', '120'])
     s2 = SelectSerial(['Самонесуча стіна', 'Немає', '65', '1200', '510'])
-    s3 = SelectSerial(['Несуча стіна', 'Одна', '65', '2100', '510'])
-    s4 = SelectSerial(['Несуча стіна', 'Дві', '88', '2100', '640'])
+    s3 = SelectSerial(['Несуча стіна', 'Опирання з однієї сторони', '65', '2100', '510'])
+    s4 = SelectSerial(['Несуча стіна', 'Опирання з двох сторін', '88', '2100', '640'])
     print(s1.get_result())
     print(s2.get_result())
     print(s3.get_result())

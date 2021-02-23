@@ -202,41 +202,6 @@ class MakePDF(FPDF):
         scale = 20
         b = parameters["width, m"] * 1000 / scale
         h = parameters["height, m"] * 1000 / scale
-        # if mark[0:mark.find("П")] == '1':
-        #     b = 120/scale
-        #     h = 65/scale
-        # elif mark[0:mark.find("П")] == '2':
-        #     b = 120/scale
-        #     h = 140/scale
-        # elif mark[0:mark.find("П")] == '3':
-        #     b = 120/scale
-        #     h = 220/scale
-        # elif mark[0:mark.find("П")] == '4':
-        #     b = 120/scale
-        #     h = 290/scale
-        # elif mark[0:mark.find("П")] == '5':
-        #     b = 250/scale
-        #     h = 220/scale
-        # elif mark[0:mark.find("П")] == '5':
-        #     b = 250/scale
-        #     h = 220/scale
-        # elif mark[0:mark.find("П")] == '6':
-        #     b = 250 / scale
-        #     h = 220 / scale
-        # elif mark[0:mark.find("П")] == '7':
-        #     b = 250 / scale
-        #     h = 220 / scale
-        # elif mark[0:mark.find("П")] == '8':
-        #     b = 250 / scale
-        #     h = 220 / scale
-        # elif mark[0:mark.find("П")] == '9':
-        #     b = 250 / scale
-        #     h = 220 / scale
-        # elif mark[0:mark.find("П")] == '10':
-        #     b = 250 / scale
-        #     h = 220 / scale
-        # else:
-        #     return f'Помилка перерізу балки'
         self.form3.set_line_width(0.5)
         self.form3.rect(x0, y0, b, -h)
         self.form3.set_line_width(0.05)
