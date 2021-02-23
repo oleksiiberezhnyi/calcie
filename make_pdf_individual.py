@@ -22,11 +22,11 @@ class MakePDF(FPDF):
         self._draw_form_3()
         self._draw_specification_for_package(result_dict, 20, 30, self.title1)
         self._count_dict = dict()
-        self._calculation_count(result_dict)
-        self._draw_specification_for_element(self._count_dict, 20, 30 + 15 + (count_of_lines + 2) * 8 + 20, self.title2)
-        self._draw_statement(count_of_lines, 230, 30, self.title3)
-        self.make(result_dict)
-        self._annotation(text=self.annotation)
+        # self._calculation_count(result_dict)
+        # self._draw_specification_for_element(self._count_dict, 20, 30 + 15 + (count_of_lines + 2) * 8 + 20, self.title2)
+        # self._draw_statement(count_of_lines, 230, 30, self.title3)
+        # self.make(result_dict)
+        # self._annotation(text=self.annotation)
         self.form3.output(f"static/{filename}")
 
     def _calculation_count(self, result_dict: dict):

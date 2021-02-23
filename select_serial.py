@@ -85,26 +85,6 @@ class SelectSerial:
         return self._result_list
 
 
-class SelectIndividual:
-
-    def __init__(self, request_list: list):
-        self._type_of_wall = request_list[0]
-        self._type_of_construction_wall = request_list[1]
-        self._height_of_beam = request_list[2]
-        self._width_of_opening = int(request_list[3]) / 1000
-        self._width_of_wall = int(request_list[4]) / 1000
-        self._result_list = []
-        self._selector()
-
-    def _selector(self):
-        if self._type_of_wall == 'Несуча стіна' and self._type_of_construction_wall == 'Опирання з однієї сторони':
-            max_loads = 0
-        elif self._type_of_wall == 'Несуча стіна' and self._type_of_construction_wall == 'Опирання з двох сторін':
-            max_loads = 0
-        else:
-            max_loads = 17.64 * self._width_of_wall * self._width_of_opening
-
-
 if __name__ == '__main__':
 
     s1 = SelectSerial(['Перегородка', 'Немає', '65', '1000', '120'])
