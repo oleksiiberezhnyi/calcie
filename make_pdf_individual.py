@@ -1,7 +1,8 @@
 from fpdf import FPDF
 from collections import Counter
 from datetime import datetime
-from serial_beam import Catalog
+from select_individual import SelectIndividual
+from math import pi, ceil, floor
 
 
 class MakePDF(FPDF):
@@ -9,81 +10,502 @@ class MakePDF(FPDF):
 
     def __init__(self, result_dict: dict, filename: str):
         super().__init__()
-        self.annotation = "Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію"
-        self.title1 = "З/б балка Б-1. Опалубне креслення"
-        self.title2 = "З/б балка Б-1. Армування"
-        self.title3 = "Специфікація"
-        self.count_of_lines = 8
-        self.form3 = FPDF(orientation="L", unit="mm", format="A3")
-        self.form3.add_page()
-        self.form3.add_font("iso", "", "static/ISOCPEUR/ISOCPEUR.ttf", uni=True)
-        self._draw_form_3()
-        self._draw_specification(result_dict, 20, 208, self.title3)
-        self._count_dict = dict()
-        # self._calculation_count(result_dict)
-        # self._draw_specification_for_element(self._count_dict, 20, 30 + 15 + (count_of_lines + 2) * 8 + 20, self.title2)
-        # self._draw_statement(count_of_lines, 230, 30, self.title3)
-        # self.make(result_dict)
-        # self._annotation(text=self.annotation)
-        self.form3.output(f"static/{filename}")
+        try:
+            self._result = SelectIndividual(result_dict)
+            self._result_dict = self._result.get_result_dict()
+            self.annotation = "Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію"
+            self.title1 = "З/б балка Б-1. Опалубне креслення"
+            self.title2 = "З/б балка Б-1. Армування"
+            self.title3 = "Специфікація"
+            self.scale = 20
+            self.count_of_lines = 11
+            self.form3 = FPDF(orientation="L", unit="mm", format="A3")
+            self.form3.add_page()
+            self.form3.add_font("iso", "", "static/ISOCPEUR/ISOCPEUR.ttf", uni=True)
+            self._draw_form_3()
+            self._draw_specification(self._result_dict, 20, 184, self.title3)
+            self._make()
+            self.form3.output(f"static/{filename}")
+        except:
+            self._make_error()
 
-    # def _calculation_count(self, result_dict: dict):
-    #     temp_list = []
-    #     position = 1
-    #     for value in result_dict.values():
-    #         for element in value:
-    #             for elem in element.keys():
-    #                 temp_list.append(elem)
-    #     for k, v in Counter(temp_list).items():
-    #         self._count_dict[k] = {"count": v, "position": position}
-    #         position += 1
-    #     return self._count_dict
-    #
-    # def make(self, result_dict: dict):
-    #     n = 0
-    #     for mark, parameters_list in result_dict.items():
-    #         self.make_package_of_serial_beam(parameters_list, mark, n)
-    #         n += 1
-    #
-    # def make_package_of_serial_beam(self, package: list, mark: str, n):
-    #     scale = 20
-    #     i = n
-    #     if i < 5:
-    #         x0 = 265
-    #         y0 = 67 + 4 * 8 * i
-    #         self.form3.set_font("iso", "", 11)
-    #         self.form3.text(x0 - 29, y0 - 5, mark)
-    #         for nested_dict in package:
-    #             position = str(self._count_dict.get(list(nested_dict.keys())[0])["position"])
-    #             self._draw_serial_beam(list(nested_dict.values())[0], x0, y0, position)
-    #             x0 += nested_dict[list(nested_dict.keys())[0]]["width, m"] * 1000 / scale + 10 / scale
-    #     else:
-    #         x0 = 355
-    #         y0 = 67 + 4 * 8 * (i - 5)
-    #         self.form3.set_font("iso", "", 11)
-    #         self.form3.text(x0 - 29, y0 - 5, mark)
-    #         for nested_dict in package:
-    #             position = str(self._count_dict.get(list(nested_dict.keys())[0])["position"])
-    #             self._draw_serial_beam(list(nested_dict.values())[0], x0, y0, position)
-    #             x0 += nested_dict[list(nested_dict.keys())[0]]["width, m"] * 1000 / scale + 10 / scale
-    #     i += 1
-    #
-    # def _draw_serial_beam(self, parameters: dict, x=260, y=70, position: str = '00'):
-    #     x0 = x
-    #     y0 = y
-    #     scale = 20
-    #     b = parameters["width, m"] * 1000 / scale
-    #     h = parameters["height, m"] * 1000 / scale
-    #     self.form3.set_line_width(0.5)
-    #     self.form3.rect(x0, y0, b, -h)
-    #     self.form3.set_line_width(0.05)
-    #     self.form3.line(x0, y0, x0 + b, y0 - h)
-    #     self.form3.line(x0 + b, y0, x0, y0 - h)
-    #     self.form3.line(x0 + b / 2, y0 - h + 1.25, x0 + b / 4, y0 - h - 5)
-    #     self.form3.line(x0 + b / 4, y0 - h - 5, x0 + b / 4 + 4, y0 - h - 5)
-    #     self.form3.ellipse(x0 + b / 2 - 0.5, y0 - h + 0.75, 1, 1, "F")
-    #     self.form3.set_font("iso", "", 11)
-    #     self.form3.text(x0 + b / 4 + 0.5, y0 - h - 5.5, position)
+    def _make_error(self):
+        print("error")
+        return "Помилка! З даними параметрами неможливо виконати розрахунок. Збільшіть висоту перерізу."
+
+    def _make(self):
+        self._draw_beam(36, 30)
+        self._draw_rainforcment(36, 110)
+
+    def _draw_beam(self, x, y):
+        x0 = x
+        y0 = y
+        l = (int(self._result_dict["Б-1"][2]) + 500) / self.scale
+        h = int(self._result_dict["Б-1"][3]) / self.scale
+        b = int(self._result_dict["Б-1"][4]) / self.scale
+        self.form3.set_font("iso", "", 14)
+        self.form3.text(x0 + l / 2.5, y0 - 5, self.title1)
+        self.form3.set_line_width(0.5)
+        self.form3.rect(x0, y0, l, h)
+        self._dim_h(x0, y0 + h, l)
+        self._dim_v(x0, y0, h)
+        if l > 250:
+            self.form3.rect(x0 + l + 16, y0, b, h)
+            self._dim_h(x0 + l + 16, y0 + h, b)
+        else:
+            self.form3.rect(x0 + l + 30, y0, b, h)
+            self._dim_h(x0 + l + 30, y0 + h, b)
+
+    def _draw_rainforcment(self, x, y):
+        x0 = x
+        y0 = y
+        l = (int(self._result_dict["Б-1"][2]) + 500) / self.scale
+        h = int(self._result_dict["Б-1"][3]) / self.scale
+        b = int(self._result_dict["Б-1"][4]) / self.scale
+        self.form3.set_font("iso", "", 14)
+        self.form3.text(x0 + l / 2.35, y0 - 5, self.title2)
+        diam_pos1 = self._result_dict["1"][1] / self.scale
+        diam_pos2 = self._result_dict["2"][1] / self.scale
+        diam_pos3 = self._result_dict["3"][1] / self.scale
+        diam_pos4 = self._result_dict["4"][1] / self.scale
+        a = diam_pos1 / 2 + 20 / self.scale
+        self.form3.set_line_width(0.05)
+        self.form3.rect(x0, y0, l, h)
+        pos1_l = int(self._result_dict["1"][3] / self.scale * 1000)
+        pos2_l = int(self._result_dict["2"][3] / self.scale * 1000)
+        self.form3.set_line_width(0.5)
+        self.form3.line(x0 + 30 / self.scale, y0 + h - a, x0 + 30 / self.scale + pos1_l, y0 + h - 30 / self.scale)
+        self.form3.line(x0 + 30 / self.scale, y0 + a, x0 + 30 / self.scale + pos2_l, y0 + 30 / self.scale)
+        pos3_data = self._result.get_distance_position_3_4()
+
+        def draw_pos3(x, y):
+            self.form3.line(
+                x,
+                y + a - diam_pos2 / 2 - diam_pos3 / 2,
+                x,
+                y + h - a + diam_pos2 / 2 + diam_pos3 / 2,
+            )
+
+        draw_pos3(x0 + (30 + 50) / self.scale, y0)
+        draw_pos3(x0 + (30 + 50) / self.scale + pos3_data[1] * 1000 / self.scale, y0)
+        draw_pos3(x0 + l - (30 + 50) / self.scale - pos3_data[1] * 1000 / self.scale, y0)
+        draw_pos3(x0 + l - (30 + 50) / self.scale, y0)
+        mid_dist_temp = round((pos2_l * self.scale - (50 + pos3_data[1] * 1000) * 2 - pos3_data[3] * 1000) / 2)
+        mid_dist = mid_dist_temp / self.scale
+        draw_pos3(x0 + 30 / self.scale + (50 + pos3_data[1] * 1000) / self.scale + mid_dist, y0)
+        draw_pos3(x0 + 30 / self.scale + (50 + pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + mid_dist, y0)
+        s = (b - 2 * a) / (self._result_dict["1"][0] - 1)
+        if l > 250:
+            self.form3.set_line_width(0.05)
+            self.form3.rect(x0 + l + 16, y0, b, h)
+            self.form3.set_line_width(0.5)
+            self.form3.line(
+                x0 + l + 16 + a - (diam_pos3 + diam_pos1) / 2,
+                y0 + 10 / self.scale,
+                x0 + l + 16 + a - (diam_pos3 + diam_pos1) / 2,
+                y0 + h - 10 / self.scale
+            )
+            self.form3.line(
+                x0 + l + 16 + b - a + (diam_pos3 + diam_pos1) / 2,
+                y0 + 10 / self.scale,
+                x0 + l + 16 + b - a + (diam_pos3 + diam_pos1) / 2,
+                y0 + h - 10 / self.scale
+            )
+            self.form3.line(
+                x0 + l + 16 + 10 / self.scale,
+                y0 + a - (diam_pos3 + diam_pos2) / 2,
+                x0 + l + 16 + b - 10 / self.scale,
+                y0 + a - (diam_pos3 + diam_pos2) / 2
+            )
+            self.form3.line(
+                x0 + l + 16 + 10 / self.scale,
+                y0 + h - a + (diam_pos3 + diam_pos1) / 2,
+                x0 + l + 16 + b - 10 / self.scale,
+                y0 + h - a + (diam_pos3 + diam_pos1) / 2
+            )
+            self.form3.set_line_width(0.05)
+            self.form3.ellipse(x0 + l + 16 + a - diam_pos1 / 2, y0 + a - diam_pos2 / 2, diam_pos2, diam_pos2, "FD")
+            self.form3.ellipse(x0 + l + 16 - a + diam_pos1 / 2 + b - diam_pos2, y0 + a - diam_pos2 / 2, diam_pos2, diam_pos2, "FD")
+            for i in range(self._result_dict["1"][0]):
+                self.form3.ellipse(x0 + l + 16 + a - diam_pos1 / 2 + s * i, y0 + h - a - diam_pos1 / 2, diam_pos1, diam_pos1, "FD")
+        else:
+            self.form3.set_line_width(0.05)
+            self.form3.rect(x0 + l + 30, y0, b, h)
+            self.form3.set_line_width(0.5)
+            self.form3.line(
+                x0 + l + 30 + a - (diam_pos3 + diam_pos1) / 2,
+                y0 + 10 / self.scale,
+                x0 + l + 30 + a - (diam_pos3 + diam_pos1) / 2,
+                y0 + h - 10 / self.scale
+            )
+            self.form3.line(
+                x0 + l + 30 + b - a + (diam_pos3 + diam_pos1) / 2,
+                y0 + 10 / self.scale,
+                x0 + l + 30 + b - a + (diam_pos3 + diam_pos1) / 2,
+                y0 + h - 10 / self.scale
+            )
+            self.form3.line(
+                x0 + l + 30 + 10 / self.scale,
+                y0 + a - (diam_pos3 + diam_pos2) / 2,
+                x0 + l + 30 + b - 10 / self.scale,
+                y0 + a - (diam_pos3 + diam_pos2) / 2
+            )
+            self.form3.line(
+                x0 + l + 30 + 10 / self.scale,
+                y0 + h - a + (diam_pos3 + diam_pos1) / 2,
+                x0 + l + 30 + b - 10 / self.scale,
+                y0 + h - a + (diam_pos3 + diam_pos1) / 2
+            )
+            self.form3.set_line_width(0.05)
+            self.form3.ellipse(x0 + l + 30 + a - diam_pos1 / 2, y0 + a - diam_pos2 / 2, diam_pos2, diam_pos2, "FD")
+            self.form3.ellipse(x0 + l + 30 - a + diam_pos1 / 2 + b - diam_pos2, y0 + a - diam_pos2 / 2, diam_pos2, diam_pos2, "FD")
+            for i in range(self._result_dict["1"][0]):
+                self.form3.ellipse(x0 + l + 30 + a - diam_pos1 / 2 + s * i, y0 + h - a - diam_pos1 / 2, diam_pos1, diam_pos1, "FD")
+        self._dim_h(x0, y0 + h, 30 / self.scale, -2.5)
+        self._dim_h(x0 + 30 / self.scale, y0 + h, 50 / self.scale, 4)
+        self._dim_h(
+            x0 + 30 / self.scale + 50 / self.scale,
+            y0 + h,
+            pos3_data[1] * 1000 / self.scale,
+            -5,
+            f"{pos3_data[0] - 1}x100={(pos3_data[0] - 1) * 100}"
+        )
+        self._dim_h(
+            x0 + 30 / self.scale + 50 / self.scale + pos3_data[1] * 1000 / self.scale,
+            y0 + h,
+            mid_dist
+        )
+        self._dim_h(
+            x0 + 30 / self.scale + 50 / self.scale + pos3_data[1] * 1000 / self.scale + mid_dist,
+            y0 + h,
+            pos3_data[3] * 1000 / self.scale,
+            -5,
+            f"{pos3_data[2] - 1}x200={(pos3_data[2] - 1) * 200}"
+        )
+        self._dim_h(
+            x0 + 30 / self.scale + 50 / self.scale + pos3_data[1] * 1000 / self.scale + mid_dist + pos3_data[3] * 1000 / self.scale,
+            y0 + h,
+            mid_dist
+        )
+        self._dim_h(
+            x0 + 30 / self.scale + 50 / self.scale + pos3_data[1] * 1000 / self.scale + 2 * mid_dist + pos3_data[3] * 1000 / self.scale,
+            y0 + h,
+            pos3_data[1] * 1000 / self.scale,
+            -5,
+            f"{pos3_data[0] - 1}x100={(pos3_data[0] - 1) * 100}"
+        )
+        self._dim_h(
+            x0 + 30 / self.scale + 50 / self.scale + 2 * pos3_data[1] * 1000 / self.scale + 2 * mid_dist + pos3_data[3] * 1000 / self.scale,
+            y0 + h,
+            50 / self.scale,
+            -3
+        )
+        self._dim_h(
+            x0 + 30 / self.scale + 2 * 50 / self.scale + 2 * pos3_data[1] * 1000 / self.scale + 2 * mid_dist + pos3_data[3] * 1000 / self.scale,
+            y0 + h,
+            30 / self.scale,
+            3
+        )
+        self._dim_v(x0, y0, a, 3)
+        self._dim_v(x0, y0 + a, h - 2 * a)
+        self._dim_v(x0, y0 - a + h, a, -3)
+        if l > 250:
+            self._dim_h(x0 + l + 16, y0 + h, a, -3)
+            if self._result_dict['1'][0] > 2:
+                self._dim_h(
+                    x0 + l + 16 + a,
+                    y0 + h,
+                    b - 2 * a,
+                    -1,
+                    f" "
+                )
+                self.form3.set_line_width(0.05)
+                self.form3.line(x0 + l + 16 + b / 2, y0 + h + 8, x0 + l + 16 + b / 2, y0 + h + 13)
+                self.form3.line(x0 + l + 16 + b / 2, y0 + h + 13, x0 + l + 16 + b / 2 + 15, y0 + h + 13)
+                self.form3.text(
+                    x0 + l + 16 + b / 2 + 1,
+                    y0 + h + 12.5,
+                    f"{self._result_dict['1'][0] - 1}x"
+                    f"{int(round((b - 2 * a) * self.scale / (self._result_dict['1'][0] - 1), 0))}="
+                    f"{int(round((b - 2 * a) * self.scale, 0))}")
+            else:
+                self._dim_h(
+                    x0 + l + 16 + a,
+                    y0 + h,
+                    b - 2 * a,
+                    -1,
+                    f"{int(round((b - 2 * a) * self.scale / (self._result_dict['1'][0] - 1), 0))}"
+                )
+            self._dim_h(x0 + l + 16 - a + b, y0 + h, a, 3.5)
+            self._dim_v(x0 + l + 16, y0, a, 3)
+            self._dim_v(x0 + l + 16, y0 + a, h - 2 * a)
+            self._dim_v(x0 + l + 16, y0 - a + h, a, -3)
+        else:
+            self._dim_h(x0 + l + 30, y0 + h, a, -3)
+            if self._result_dict['1'][0] > 2:
+                self._dim_h(
+                    x0 + l + 30 + a,
+                    y0 + h,
+                    b - 2 * a,
+                    -1,
+                    " "  #f"{self._result_dict['1'][0] - 1}x{int(round((b - 2 * a) * self.scale / (self._result_dict['1'][0] - 1), 0))}"
+                )
+                self.form3.set_line_width(0.05)
+                self.form3.line(x0 + l + 30 + b / 2, y0 + h + 8, x0 + l + 30 + b / 2, y0 + h + 13)
+                self.form3.line(x0 + l + 30 + b / 2, y0 + h + 13, x0 + l + 30 + b / 2 + 15, y0 + h + 13)
+                self.form3.text(
+                    x0 + l + 30 + b / 2 + 1,
+                    y0 + h + 12.5,
+                    f"{self._result_dict['1'][0] - 1}x"
+                    f"{int(round((b - 2 * a) * self.scale / (self._result_dict['1'][0] - 1), 0))}="
+                    f"{int(round((b - 2 * a) * self.scale, 0))}")
+            else:
+                self._dim_h(
+                    x0 + l + 30 + a,
+                    y0 + h,
+                    b - 2 * a,
+                    0,
+                    f"{int(round((b - 2 * a) * self.scale / (self._result_dict['1'][0] - 1), 0))}"
+                )
+            self._dim_h(x0 + l + 30 - a + b, y0 + h, a, 3.5)
+            self._dim_v(x0 + l + 30, y0, a, 3)
+            self._dim_v(x0 + l + 30, y0 + a, h - 2 * a)
+            self._dim_v(x0 + l + 30, y0 - a + h, a, -3)
+        self.form3.set_line_width(0.05)
+        self.form3.set_font("iso", "", 11)
+        self.form3.line(x0 + l / 2 + 5, y0 + a, x0 + l / 2 + 5, y0 + a + 5)
+        self.form3.line(x0 + l / 2 + 5, y0 + a + 5, x0 + l / 2 + 8, y0 + a + 5)
+        self.form3.text(x0 + l / 2 + 6, y0 + a + 4.5, "2")
+        self.form3.line(x0 + l / 2 - 5, y0 + h - a, x0 + l / 2 - 5, y0 + h - a - 5)
+        self.form3.line(x0 + l / 2 - 5, y0 + h - a - 5, x0 + l / 2 - 2, y0 + h - a - 5)
+        self.form3.text(x0 + l / 2 - 4, y0 + h - a - 5.5, "1")
+        self.form3.line(x0 + 80 / self.scale, y0 + h / 2, x0 + 80 / self.scale + 8, y0 + h / 2)
+        self.form3.text(x0 + 80 / self.scale + 6, y0 + h / 2 - 0.5, "3")
+        self.form3.line(
+            x0 + (80 + pos3_data[1] * 1000) / self.scale,
+            y0 + h / 2,
+            x0 + (80 + pos3_data[1] * 1000) / self.scale - 8,
+            y0 + h / 2
+        )
+        self.form3.text(x0 + (80 + pos3_data[1] * 1000) / self.scale - 7, y0 + h / 2 - 0.5, "3")
+        self.form3.line(
+            x0 + (80 + pos3_data[1] * 1000) / self.scale + mid_dist,
+            y0 + h / 2,
+            x0 + (80 + pos3_data[1] * 1000) / self.scale + mid_dist + 8,
+            y0 + h / 2
+        )
+        self.form3.text(x0 + (80 + pos3_data[1] * 1000) / self.scale + mid_dist + 6, y0 + h / 2 - 0.5, "3")
+        self.form3.line(
+            x0 + (80 + pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + mid_dist,
+            y0 + h / 2,
+            x0 + (80 + pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + mid_dist - 8,
+            y0 + h / 2
+        )
+        self.form3.text(x0 + (80 + pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + mid_dist -7, y0 + h / 2 - 0.5, "3")
+        self.form3.line(
+            x0 + (80 + pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + 2 * mid_dist,
+            y0 + h / 2,
+            x0 + (80 + pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + 2 * mid_dist + 8,
+            y0 + h / 2
+        )
+        self.form3.text(x0 + (80 + pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + 2 * mid_dist + 6, y0 + h / 2 - 0.5, "3")
+        self.form3.line(
+            x0 + (80 + 2 * pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + 2 * mid_dist,
+            y0 + h / 2,
+            x0 + (80 + 2 * pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + 2 * mid_dist - 8,
+            y0 + h / 2
+        )
+        self.form3.text(x0 + (80 + 2 * pos3_data[1] * 1000 + pos3_data[3] * 1000) / self.scale + 2 * mid_dist - 7, y0 + h / 2 - 0.5, "3")
+        if l > 250:
+            for i in range(self._result_dict["1"][0]):
+                self.form3.line(
+                    x0 + l + 16 + a + s * i,
+                    y0 + h - a,
+                    x0 + l + 16 + a + 2,
+                    y0 + h - a - 5
+                )
+            self.form3.line(
+                x0 + l + 16 + a + 2,
+                y0 + h - a - 5,
+                x0 + l + 16 + a + 5,
+                y0 + h - a - 5
+            )
+            self.form3.text(x0 + l + 16 + a + 3, y0 + h - a - 5.5, "1")
+            self.form3.line(
+                x0 + l + 16 + a - diam_pos2 / 2,
+                y0 + a,
+                x0 + l + 16 + a - diam_pos2 / 2 - 2,
+                y0 + a - 5
+            )
+            self.form3.line(
+                x0 + l + 16 + a - diam_pos2 / 2 - 2,
+                y0 + a - 5,
+                x0 + l + 16 + a - diam_pos2 / 2 - 5,
+                y0 + a - 5
+            )
+            self.form3.text(x0 + l + 16 + a - diam_pos2 / 2 - 4, y0 + a - 5.5, "2")
+            self.form3.line(
+                x0 + l + 16 - a + b - diam_pos2 / 2 + diam_pos1 / 2,
+                y0 + a,
+                x0 + l + 16 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 2,
+                y0 + a - 5
+            )
+            self.form3.line(
+                x0 + l + 16 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 2,
+                y0 + a - 5,
+                x0 + l + 16 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 5,
+                y0 + a - 5
+            )
+            self.form3.text(x0 + l + 16 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 3, y0 + a - 5.5, "2")
+            self.form3.line(
+                x0 + l + 16 + a - (diam_pos3 / 2 + diam_pos1 / 2),
+                y0 + h / 2,
+                x0 + l + 16 + a - (diam_pos3 / 2 + diam_pos1 / 2) - 6,
+                y0 + h / 2
+            )
+            self.form3.text(x0 + l + 16 + a - (diam_pos3 / 2 + diam_pos1 / 2) - 5, y0 + h / 2 - 0.5, "3")
+            self.form3.line(
+                x0 + l + 16 - a + (diam_pos3 / 2 + diam_pos1 / 2) + b,
+                y0 + h / 2,
+                x0 + l + 16 - a + (diam_pos3 / 2 + diam_pos1 / 2) + b + 8,
+                y0 + h / 2
+            )
+            self.form3.text(x0 + l + 16 - a + (diam_pos3 + diam_pos1) / 2 + b + 6, y0 + h / 2 - 0.5, "3")
+            self.form3.line(
+                x0 + l + 16 + b / 2,
+                y0 + a - (diam_pos4 + diam_pos2) / 2,
+                x0 + l + 16 + b / 2 - 2,
+                y0 + a - (diam_pos4 + diam_pos2) / 2 - 5
+            )
+            self.form3.line(x0 + l + 16 + b / 2 - 2, y0 + a - (diam_pos4 + diam_pos2) / 2 - 5, x0 + l + 16 + b / 2 + 1, y0 + a - (diam_pos4 + diam_pos2) / 2 - 5)
+            self.form3.text(x0 + l + 16 + b / 2 - 1, y0 + a - (diam_pos4 + diam_pos2) / 2 - 5.5, "4")
+            self.form3.line(
+                x0 + l + 16 + 3,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2,
+                x0 + l + 16 - 2,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 5
+            )
+            self.form3.line(
+                x0 + l + 16 - 2,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 5,
+                x0 + l + 16 - 5,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 5
+            )
+            self.form3.text(x0 + l + 16 - 4, y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 4.5, "4")
+        else:
+            for i in range(self._result_dict["1"][0]):
+                self.form3.line(
+                    x0 + l + 30 + a + s * i,
+                    y0 + h - a,
+                    x0 + l + 30 + a + 2,
+                    y0 + h - a - 5
+                )
+            self.form3.line(
+                x0 + l + 30 + a + 2,
+                y0 + h - a - 5,
+                x0 + l + 30 + a + 5,
+                y0 + h - a - 5
+            )
+            self.form3.text(x0 + l + 30 + a + 3, y0 + h - a - 5.5, "1")
+            self.form3.line(
+                x0 + l + 30 + a - diam_pos2 / 2,
+                y0 + a,
+                x0 + l + 30 + a - diam_pos2 / 2 - 2,
+                y0 + a - 5
+            )
+            self.form3.line(
+                x0 + l + 30 + a - diam_pos2 / 2 - 2,
+                y0 + a - 5,
+                x0 + l + 30 + a - diam_pos2 / 2 - 5,
+                y0 + a - 5
+            )
+            self.form3.text(x0 + l + 30 + a - diam_pos2 / 2 - 4, y0 + a - 5.5, "2")
+            self.form3.line(
+                x0 + l + 30 - a + b - diam_pos2 / 2 + diam_pos1 / 2,
+                y0 + a,
+                x0 + l + 30 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 2,
+                y0 + a - 5
+            )
+            self.form3.line(
+                x0 + l + 30 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 2,
+                y0 + a - 5,
+                x0 + l + 30 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 5,
+                y0 + a - 5
+            )
+            self.form3.text(x0 + l + 30 - a + b - diam_pos2 / 2 + diam_pos1 / 2 + 3, y0 + a - 5.5, "2")
+            self.form3.line(
+                x0 + l + 30 + a - (diam_pos3 / 2 + diam_pos1 / 2),
+                y0 + h / 2,
+                x0 + l + 30 + a - (diam_pos3 / 2 + diam_pos1 / 2) - 6,
+                y0 + h / 2
+            )
+            self.form3.text(x0 + l + 30 + a - (diam_pos3 / 2 + diam_pos1 / 2) - 5, y0 + h / 2 - 0.5, "3")
+            self.form3.line(
+                x0 + l + 30 - a + (diam_pos3 / 2 + diam_pos1 / 2) + b,
+                y0 + h / 2,
+                x0 + l + 30 - a + (diam_pos3 / 2 + diam_pos1 / 2) + b + 8,
+                y0 + h / 2
+            )
+            self.form3.text(x0 + l + 30 - a + (diam_pos3 + diam_pos1) / 2 + b + 6, y0 + h / 2 - 0.5, "3")
+            self.form3.line(
+                x0 + l + 30 + b / 2,
+                y0 + a - (diam_pos4 + diam_pos2) / 2,
+                x0 + l + 30 + b / 2 - 2,
+                y0 + a - (diam_pos4 + diam_pos2) / 2 - 5
+            )
+            self.form3.line(x0 + l + 30 + b / 2 - 2, y0 + a - (diam_pos4 + diam_pos2) / 2 - 5, x0 + l + 30 + b / 2 + 1, y0 + a - (diam_pos4 + diam_pos2) / 2 - 5)
+            self.form3.text(x0 + l + 30 + b / 2 - 1, y0 + a - (diam_pos4 + diam_pos2) / 2 - 5.5, "4")
+            self.form3.line(
+                x0 + l + 30 + 3,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2,
+                x0 + l + 30 - 2,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 5
+            )
+            self.form3.line(
+                x0 + l + 30 - 2,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 5,
+                x0 + l + 30 - 5,
+                y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 5
+            )
+            self.form3.text(x0 + l + 30 - 4, y0 + h - a + (diam_pos4 + diam_pos1) / 2 + 4.5, "4")
+
+    def _dim_h(self, x, y, l, x_text=0.0, text=""):
+        x0 = x
+        y0 = y
+        x_t = x0 + x_text + l / 2 - 2
+        if len(text) == 0:
+            dim_text = str(int(l * self.scale))
+        else:
+            dim_text = text
+        self.form3.set_line_width(0.05)
+        self.form3.line(x0 - 2, y0 + 8, x0 + l + 2, y0 + 8)
+        self.form3.line(x0, y0 + 2, x0, y0 + 10)
+        self.form3.line(x0 + l, y0 + 2, x0 + l, y0 + 10)
+        self.form3.set_line_width(0.5)
+        self.form3.line(x0 - 0.9, y0 + 8.9, x0 + 0.9, y0 + 7.1)
+        self.form3.line(x0 + l - 0.9, y0 + 8.9, x0 + l + 0.9, y0 + 7.1)
+        self.form3.set_font("iso", "", 11)
+        self.form3.text(x_t, y0 + 7.5, dim_text)
+
+    def _dim_v(self, x, y, l, x_text=0.0, text=""):
+        x0 = x
+        y0 = y
+        x_t = x0 + x_text - l / 2 - 2
+        self.form3.rotate(90, x0, y0)
+        if len(text) == 0:
+            dim_text = str(int(l * self.scale))
+        else:
+            dim_text = text
+        self.form3.set_line_width(0.05)
+        self.form3.line(x0 + 2, y0 - 8, x0 - l - 2, y0 - 8)
+        self.form3.line(x0, y0 - 2, x0, y0 - 10)
+        self.form3.line(x0 - l, y0 - 2, x0 - l, y0 - 10)
+        self.form3.set_line_width(0.5)
+        self.form3.line(x0 + 0.9, y0 - 8.9, x0 - 0.9, y0 - 7.1)
+        self.form3.line(x0 - l + 0.9, y0 - 8.9, x0 - l - 0.9, y0 - 7.1)
+        self.form3.set_font("iso", "", 11)
+        self.form3.text(x_t, y0 - 8.5, dim_text)
+        self.form3.rotate(0)
 
     def _draw_form_3(self, y=0):
         y0 = y
@@ -136,10 +558,6 @@ class MakePDF(FPDF):
         self.form3.image("static/images/logo_dark.png", 366.25, y0 + 273.25, 42.5, 12.5)
         
     def _draw_specification(self, result_dict: dict, x=230, y=30, title: str = "Специфікація"):
-        mark = ""
-        for key in result_dict.keys():
-            mark = key
-            break
         x0 = x
         y0 = y
         self.form3.set_line_width(0.5)
@@ -154,16 +572,8 @@ class MakePDF(FPDF):
         self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + self.count_of_lines * 8)
         y = y0 + 23
         self.form3.set_line_width(0.05)
-        text = f"Залізобетонна балка {mark}"
-        self.form3.set_font("iso", "", 11)
-        self.form3.text(x0 + 4, y0 + 20.25 + 1 * 8, mark)
-        self.form3.text(x0 + 76, y0 + 20.25 + 1 * 8, text)
-        self.form3.text(x0 + 139, y0 + 20.25 + 1 * 8, '1')
         i = 0
         while i < self.count_of_lines:
-            # try:
-            # except IndexError:
-            #     pass
             self.form3.set_font("iso", "", 11)
             self.form3.line(x0 + 0, y, x0 + 180, y)
             i += 1
@@ -178,121 +588,48 @@ class MakePDF(FPDF):
         self.form3.text(x0 + 145.3, y0 + 7.25, "Маса од.,")
         self.form3.text(x0 + 151, y0 + 11, "кг")
         self.form3.text(x0 + 163, y0 + 9.25, "Примітка")
+        self.form3.set_font("iso", "U", 11)
+        self.form3.text(x0 + 88, y0 + 20.25 + 0 * 8, "Залізобетонні вироби")
+        self.form3.text(x0 + 90, y0 + 20.25 + 2 * 8, "Арматурні вироби")
+        self.form3.text(x0 + 96, y0 + 20.25 + 7 * 8, "Матеріали")
+        self.form3.set_font("iso", "", 11)
+        mark = []
+        for key in result_dict.keys():
+            mark.append(key)
+        text0 = f"Залізобетонна балка {mark[0]}"
+        mass = (int(self._result_dict[mark[0]][2]) + 500) * int(self._result_dict[mark[0]][3]) * int(self._result_dict[mark[0]][4]) * 2500 / 1e9
+        self.form3.text(x0 + 4, y0 + 20.25 + 1 * 8, mark[0])
+        self.form3.text(x0 + 76, y0 + 20.25 + 1 * 8, text0)
+        self.form3.text(x0 + 139, y0 + 20.25 + 1 * 8, '1')
+        self.form3.text(x0 + 148.5, y0 + 20.25 + 1 * 8, str(mass))
+        i = 3
+        for p in mark[1:]:
+            diameter = self._result_dict[p][1]
+            cl = self._result_dict[p][2]
+            length = int(self._result_dict[p][3] * 1000)
+            quantity = self._result_dict[p][0]
+            text1 = f"∅{diameter}{cl}; L={length}"
+            mass = round(pi * (diameter / 1000) ** 2 / 4 * 7850 * length / 1000, 3)
+            total_mass = f"{round(mass * quantity, 3)} кг"
+            self.form3.text(x0 + 6.5, y0 + 20.25 + i * 8, p)
+            self.form3.text(x0 + 16, y0 + 20.25 + i * 8, "ДСТУ 3760:2019")
+            self.form3.text(x0 + 76, y0 + 20.25 + i * 8, text1)
+            self.form3.text(x0 + 139, y0 + 20.25 + i * 8, f"{quantity}")
+            self.form3.text(x0 + 148.5, y0 + 20.25 + i * 8, f"{mass}")
+            self.form3.text(x0 + 162.5, y0 + 20.25 + i * 8, f"{total_mass}")
+            i += 1
+        volume = (int(self._result_dict[mark[0]][2]) + 500) * int(self._result_dict[mark[0]][3]) * int(self._result_dict[mark[0]][4]) / 1e9
+        self.form3.text(x0 + 16, y0 + 20.25 + 8 * 8, "ДСТУ Б В.2.7-176:2008")
+        self.form3.text(x0 + 76, y0 + 20.25 + 8 * 8, "Бетон класу С20/25")
+        self.form3.text(x0 + 162.5, y0 + 20.25 + 8 * 8, f"{volume}")
+        self.form3.text(x0 + 171, y0 + 20.25 + 8 * 8, f"м")
+        self.form3.set_font("iso", "", 7)
+        self.form3.text(x0 + 173, y0 + 19.25 + 8 * 8, "3")
 
-    # def _draw_specification_for_element(self, count_dict: dict, x=230, y=30, title: str = "Специфікація"):
-    #     catalog = Catalog()
-    #     keys_list = []
-    #     for key in count_dict.keys():
-    #         keys_list.append(key)
-    #     count_of_lines = len(count_dict) + 2
-    #     x0 = x
-    #     y0 = y
-    #     self.form3.set_line_width(0.5)
-    #     self.form3.line(x0 + 0, y0 + 0, x0 + 180, y0 + 0)
-    #     self.form3.line(x0 + 0, y0 + 15, x0 + 180, y0 + 15)
-    #     self.form3.line(x0 + 0, y0 + 0, x0 + 0, y0 + 15 + count_of_lines * 8)
-    #     self.form3.line(x0 + 15, y0 + 0, x0 + 15, y0 + 15 + count_of_lines * 8)
-    #     self.form3.line(x0 + 75, y0 + 0, x0 + 75, y0 + 15 + count_of_lines * 8)
-    #     self.form3.line(x0 + 135, y0 + 0, x0 + 135, y0 + 15 + count_of_lines * 8)
-    #     self.form3.line(x0 + 145, y0 + 0, x0 + 145, y0 + 15 + count_of_lines * 8)
-    #     self.form3.line(x0 + 160, y0 + 0, x0 + 160, y0 + 15 + count_of_lines * 8)
-    #     self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + count_of_lines * 8)
-    #     y = y0 + 23
-    #     i = 0
-    #     self.form3.set_line_width(0.05)
-    #     while i < count_of_lines:
-    #         try:
-    #             self.form3.set_font("iso", "", 11)
-    #             self.form3.text(
-    #                 x0 + 6.5, y0 + 20.25 + i * 8,
-    #                 str(count_dict[keys_list[i]]["position"])
-    #             )
-    #             self.form3.text(
-    #                 x0 + 16, y0 + 20.25 + i * 8,
-    #                 "ДСТУ Б В.2.6-55:2008"
-    #             )
-    #             self.form3.text(x0 + 76, y0 + 20.25 + i * 8, keys_list[i])
-    #             self.form3.text(
-    #                 x0 + 139, y0 + 20.25 + i * 8,
-    #                 str(count_dict[keys_list[i]]["count"])
-    #             )
-    #             self.form3.text(
-    #                 x0 + 146.5, y0 + 20.25 + i * 8,
-    #                 str(round(catalog.get_weight(keys_list[i]) * 1000 / 9.8, 3))
-    #             )
-    #             self.form3.text(
-    #                 x0 + 161, y0 + 20.25 + i * 8,
-    #                 f"{str(round(catalog.get_weight(keys_list[i]) * 1000 / 9.8 * count_dict[keys_list[i]]['count'], 3))} кг"
-    #             )
-    #         except IndexError:
-    #             pass
-    #         self.form3.line(x0 + 0, y, x0 + 180, y)
-    #         i += 1
-    #         y += 8
-    #     self.form3.set_font("iso", "", 14)
-    #     self.form3.text(x0 + 65, y0 - 5, title)
-    #     self.form3.set_font("iso", "", 11)
-    #     self.form3.text(x0 + 5, y0 + 9.25, "Поз.")
-    #     self.form3.text(x0 + 35, y0 + 9.25, "Позначення")
-    #     self.form3.text(x0 + 94, y0 + 9.25, "Найменування")
-    #     self.form3.text(x0 + 135.5, y0 + 9.25, "Кільк.")
-    #     self.form3.text(x0 + 145.3, y0 + 7.25, "Маса од.,")
-    #     self.form3.text(x0 + 151, y0 + 11, "кг")
-    #     self.form3.text(x0 + 163, y0 + 9.25, "Примітка")
-    #
-    # def _draw_statement(self, count_of_lines: int, x=230, y=30, title: str = "Відомість"):
-    #     x0 = x
-    #     y0 = y
-    #     self.form3.set_line_width(0.5)
-    #     self.form3.line(x0 + 0, y0 + 0, x0 + 90, y0 + 0)
-    #     self.form3.line(x0 + 0, y0 + 15, x0 + 90, y0 + 15)
-    #     if count_of_lines <= 5:
-    #         self.form3.set_font("iso", "", 14)
-    #         self.form3.text(x0 + 25, y0 - 5, title)
-    #         self.form3.set_font("iso", '', 11)
-    #         self.form3.text(x0 + 5, y0 + 9.25, "Марка")
-    #         self.form3.text(x0 + 42, y0 + 9.25, "Схема перерізу")
-    #         self.form3.line(x0 + 0, y0 + 0, x0 + 0, y0 + 15 + count_of_lines * 8 * 4)
-    #         self.form3.line(x0 + 20, y0 + 0, x0 + 20, y0 + 15 + count_of_lines * 8 * 4)
-    #         self.form3.line(x0 + 90, y0 + 0, x0 + 90, y0 + 15 + count_of_lines * 8 * 4)
-    #     elif 5 < count_of_lines <= 10:
-    #         self.form3.set_font("iso", "", 14)
-    #         self.form3.text(x0 + 70, y0 - 5, title)
-    #         self.form3.set_font("iso", "", 11)
-    #         self.form3.text(x0 + 5, y0 + 9.25, "Марка")
-    #         self.form3.text(x0 + 42, y0 + 9.25, "Схема перерізу")
-    #         self.form3.text(x0 + 95, y0 + 9.25, "Марка")
-    #         self.form3.text(x0 + 132, y0 + 9.25, "Схема перерізу")
-    #         self.form3.line(x0 + 0, y0 + 0, x0 + 0, y0 + 15 + 5 * 8 * 4)
-    #         self.form3.line(x0 + 20, y0 + 0, x0 + 20, y0 + 15 + 5 * 8 * 4)
-    #         self.form3.line(x0 + 90, y0 + 0, x0 + 90, y0 + 15 + 5 * 8 * 4)
-    #         self.form3.line(x0 + 90, y0 + 0, x0 + 180, y0 + 0)
-    #         self.form3.line(x0 + 90, y0 + 15, x0 + 180, y0 + 15)
-    #         self.form3.line(x0 + 110, y0 + 0, x0 + 110, y0 + 15 + (count_of_lines - 5) * 8 * 4)
-    #         self.form3.line(x0 + 180, y0 + 0, x0 + 180, y0 + 15 + (count_of_lines - 5) * 8 * 4)
-    #     else:
-    #         pass
-    #     self.form3.set_line_width(0.05)
-    #     y = y0 + 47
-    #     i = 0
-    #     while i < count_of_lines and i < 5:
-    #         self.form3.line(x0 + 0, y, x0 + 90, y)
-    #         i += 1
-    #         y += 8 * 4
-    #     y = y0 + 47
-    #     while count_of_lines > i >= 5 and i < 10:
-    #         self.form3.line(x0 + 90, y, x0 + 180, y)
-    #         i += 1
-    #         y += 8 * 4
-    #
-    # def _annotation(self, text: str = "Примітка", x=30, y=257):
-    #     self.form3.set_font("iso", "", 11)
-    #     self.form3.text(x, y, text)
 
 if __name__ == "__main__":
     test_dict = {
-        'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '4300', '500',
-                '200']
+        'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '3500', '600', '600']
     }
     filename = "files/result_test.pdf"
     s = MakePDF(test_dict, filename)

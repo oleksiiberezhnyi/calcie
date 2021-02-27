@@ -1,6 +1,6 @@
-from math import sqrt, pi, ceil
+from math import sqrt, pi, ceil, floor
 
-test_dict = {'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '4300', '500', '200']}
+test_dict = {'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '3000', '1000', '250']}
 test_dict2 = {'Б-1': ['Несуча стіна', 'Опирання з двох сторін', '900', '250', '510']}
 test_dict3 = {'Б-1': ['Перегородка', 'Перегородка', '900', '250', '510']}
 
@@ -26,12 +26,15 @@ class SelectIndividual:
         '3': ['quantity', '8', 'A400C', 'Lenght'],
         }
         """
+
+    def get_result_dict(self):
         self._calculate_max_loads()
         self._calculation()
         self._calculate_position_1()
         self._calculate_position_2()
         self._calculate_position_3()
-        print(self._result_dict)
+        self._calculate_position_4()
+        return self._result_dict
 
     def _calculate_ksi(self, a_m):
         D = 6.25 - 12.5 * a_m
@@ -45,24 +48,27 @@ class SelectIndividual:
         else:
             raise Exception(ValueError)
 
-    def _calculate_dzetha(self, ksi):
+    @staticmethod
+    def _calculate_dzetha(ksi):
         return 1 - 0.4 * ksi
 
-    def _select_diameter(self, A_s):
-        result = (0, 0, 12000)  # (diameter, quantity, A)
+    @staticmethod
+    def _select_diameter(A_s):
+        result = (0, 0, 12000)  # (quantity, diameter, A)
         temp_result = []
         diameters = [6, 8, 10, 12, 14, 16, 18, 20, 22, 25, 28, 32, 36, 40]
         quantity = range(1, 10)
         for d in diameters:
             for n in quantity:
                 A = n * pi * d ** 2 / 4
-                if A_s * 10 ** 6 < A < A_s * 10 ** 6 * 1.3:
+                if A_s * 10 ** 6 < A < A_s * 10 ** 6 * 1.2:
                     temp_result.append((n, d, A))
         if len(temp_result) == 0:
             result = (2, 6, 2 * pi * 6 ** 2 / 4)
-        for i in temp_result:
-            if i[2] < result[2]:
-                result = i
+        try:
+            result = temp_result[ceil(len(temp_result) / 2)]
+        except:
+            result = temp_result[floor(len(temp_result) / 2)]
         return result
 
     def _calculation(self):
@@ -76,7 +82,6 @@ class SelectIndividual:
         dzetha = self._calculate_dzetha(ksi)
         A_s = M / (dzetha * f_yd * d)
         return self._select_diameter(A_s)
-
 
     def _calculate_max_loads(self):
         if self._type_of_wall == 'Несуча стіна' and self._type_of_construction_wall == 'Опирання з однієї сторони':
@@ -96,33 +101,45 @@ class SelectIndividual:
 
     def _calculate_position_1(self):
         count = self._calculation()[0]
-        diameter = self._calculation()[0]
+        diameter = self._calculation()[1]
         reinforcement_class = "A500C"
         length = round(self._beam_length - 0.06, 3)
         self._result_dict["1"] = [count, diameter, reinforcement_class, length]
 
     def _calculate_position_2(self):
         count = 2
-        diameter = 6
+        diameter = 8
         reinforcement_class = "A500C"
         length = round(self._beam_length - 0.06, 3)
         self._result_dict["2"] = [count, diameter, reinforcement_class, length]
 
     def _calculate_position_3(self):
-        length = self._beam_length - 0.06 - 0.1
-        segment1 = length / 5
-        segment2 = length - 2 * segment1
-        count = self._beam_length - 0.06 - 0.1
-        print(segment1)
-        print(segment2)
+        diameter = 8
+        reinforcement_class = "A500C"
+        length = self._height_of_beam - 0.01
+        count = self.get_distance_position_3_4()[0] * 2 + self.get_distance_position_3_4()[2]
+        self._result_dict["3"] = [count, diameter, reinforcement_class, length]
 
-        pass
+    def _calculate_position_4(self):
+        diameter = 6
+        reinforcement_class = "A240C"
+        length = self._width_of_wall - 0.01
+        count = self.get_distance_position_3_4()[0] * 2 + self.get_distance_position_3_4()[2]
+        self._result_dict["4"] = [count, diameter, reinforcement_class, length]
+
+    def get_distance_position_3_4(self):
+        distance = self._beam_length - 0.06 - 0.1
+        segment1_quantity = ceil(distance / 5 / 0.1) + 1
+        segment1_length = (segment1_quantity - 1) * 0.1
+        segment2_quantity = ceil(distance * 3 / 5 / 0.2) - 1
+        segment2_length = (segment2_quantity - 1) * 0.2
+        return segment1_quantity, segment1_length, segment2_quantity, segment2_length
 
 
 if __name__ == "__main__":
     s1 = SelectIndividual(test_dict)
-    s2 = SelectIndividual(test_dict2)
-    s3 = SelectIndividual(test_dict3)
-    print(s1._type_of_wall)
-    print(s2._type_of_wall)
-    print(s3._type_of_wall)
+    # s2 = SelectIndividual(test_dict2)
+    # s3 = SelectIndividual(test_dict3)
+    print(s1.get_result_dict())
+    # print(s2.get_result_dict())
+    # print(s3.get_result_dict())
