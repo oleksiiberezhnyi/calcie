@@ -5,8 +5,8 @@
 {% endblock %}
 {% block main %}
 <div class="">
-    {% for flash_message in get_flashed_messages() %}
-    <p>{{ flash_message }}</p>
+    {% for category, flash_message in get_flashed_messages(with_categories=true) %}
+    <div class="{{ category }}">{{ flash_message }}</div>
     {% endfor %}
 <form>
     <fieldset>
@@ -41,25 +41,9 @@
     if ($(this).val() == "Несуча стіна") {
         $('#type_of_construction_wall').removeAttr('disabled');
         $('#hide_show_type_of_construction_wall').show();
-        $('#hide_show_120').hide();
-        $('#hide_show_250').show();
-        $('#hide_show_380').show();
-        $('#hide_show_510').show();
-        $('#hide_show_640').show();
-        $('#hide_show_770').show();
-        $('#hide_show_900').show();
-        $('#hide_show_1030').show();
     } else {
         $('#type_of_construction_wall').attr('disabled');
         $('#hide_show_type_of_construction_wall').hide();
-        $('#hide_show_120').show();
-        $('#hide_show_250').show();
-        $('#hide_show_380').show();
-        $('#hide_show_510').show();
-        $('#hide_show_640').show();
-        $('#hide_show_770').hide();
-        $('#hide_show_900').hide();
-        $('#hide_show_1030').hide();
     }
     });
     $("#type_of_wall").trigger("change");

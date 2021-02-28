@@ -1,6 +1,6 @@
 from math import sqrt, pi, ceil, floor
 
-test_dict = {'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '3000', '1000', '250']}
+test_dict = {'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '900', '250', '510']}
 test_dict2 = {'Б-1': ['Несуча стіна', 'Опирання з двох сторін', '900', '250', '510']}
 test_dict3 = {'Б-1': ['Перегородка', 'Перегородка', '900', '250', '510']}
 
@@ -65,10 +65,11 @@ class SelectIndividual:
                     temp_result.append((n, d, A))
         if len(temp_result) == 0:
             result = (2, 6, 2 * pi * 6 ** 2 / 4)
-        try:
-            result = temp_result[ceil(len(temp_result) / 2)]
-        except:
-            result = temp_result[floor(len(temp_result) / 2)]
+        else:
+            try:
+                result = temp_result[ceil(len(temp_result) / 2) - 1]
+            except IndexError:
+                result = temp_result[floor(len(temp_result) / 2) - 1]
         return result
 
     def _calculation(self):

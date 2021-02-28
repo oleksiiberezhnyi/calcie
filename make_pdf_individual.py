@@ -13,11 +13,12 @@ class MakePDF(FPDF):
         try:
             self._result = SelectIndividual(result_dict)
             self._result_dict = self._result.get_result_dict()
+            print(self._result_dict)
             self.annotation = "Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію"
             self.title1 = "З/б балка Б-1. Опалубне креслення"
             self.title2 = "З/б балка Б-1. Армування"
             self.title3 = "Специфікація"
-            self.scale = 20
+            self.scale = 10
             self.count_of_lines = 11
             self.form3 = FPDF(orientation="L", unit="mm", format="A3")
             self.form3.add_page()
@@ -30,8 +31,9 @@ class MakePDF(FPDF):
             self._make_error()
 
     def _make_error(self):
-        print("error")
-        return "Помилка! З даними параметрами неможливо виконати розрахунок. Збільшіть висоту перерізу."
+        print('error')
+        raise Exception
+        # return "Помилка! З даними параметрами неможливо виконати розрахунок. Збільшіть висоту перерізу."
 
     def _make(self):
         self._draw_beam(36, 30)
@@ -629,7 +631,7 @@ class MakePDF(FPDF):
 
 if __name__ == "__main__":
     test_dict = {
-        'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '3500', '600', '600']
+        'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '900', '250', '510']
     }
     filename = "files/result_test.pdf"
     s = MakePDF(test_dict, filename)

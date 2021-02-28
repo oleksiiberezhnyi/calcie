@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, flash
-from make_pdf import MakePDF
+from make_pdf import MakePDF as serialPDF
+from make_pdf_individual import MakePDF as individualPDF
 from select_serial import SelectSerial
 from flask_caching import Cache
 
@@ -135,7 +136,8 @@ def individual():
             request.form["height_of_beam"],
             request.form["width_of_wall"]
         )
-        print(requests_dict_individual.get())
+        file_name = f"files/result_individual.pdf"
+        individualPDF(requests_dict_individual.get(), file_name)
     return render_template("individual.html", title="Розрахунки", menu=menu, data=requests_dict.get(), count=len(requests_dict.get()))
 
 
@@ -173,7 +175,7 @@ def result():
                 dict_for_pdf[mark] = package.get_result()
             else:
                 continue
-    MakePDF(dict_for_pdf, file_name)
+    serialPDF(dict_for_pdf, file_name)
     return render_template("result.html", title="Результат", file=file_name, count=len(requests_dict.get()))
 
 
