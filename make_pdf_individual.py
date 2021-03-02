@@ -10,30 +10,41 @@ class MakePDF(FPDF):
 
     def __init__(self, result_dict: dict, filename: str):
         super().__init__()
-        try:
-            self._result = SelectIndividual(result_dict)
-            self._result_dict = self._result.get_result_dict()
-            print(self._result_dict)
-            self.annotation = "Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію"
-            self.title1 = "З/б балка Б-1. Опалубне креслення"
-            self.title2 = "З/б балка Б-1. Армування"
-            self.title3 = "Специфікація"
+        # try:
+        self._result = SelectIndividual(result_dict)
+        self._result_dict = self._result.get_result_dict()
+        self.annotation = "Даний підбір виконано автоматично. Для підтвердження підбору зверніться у проектну організацію"
+        self.title1 = "З/б балка Б-1. Опалубне креслення"
+        self.title2 = "З/б балка Б-1. Армування"
+        self.title3 = "Специфікація"
+        if int(self._result_dict["Б-1"][2]) < 2500 and int(self._result_dict["Б-1"][3]) < 400:
             self.scale = 10
-            self.count_of_lines = 11
-            self.form3 = FPDF(orientation="L", unit="mm", format="A3")
-            self.form3.add_page()
-            self.form3.add_font("iso", "", "static/ISOCPEUR/ISOCPEUR.ttf", uni=True)
-            self._draw_form_3()
-            self._draw_specification(self._result_dict, 20, 184, self.title3)
-            self._make()
-            self.form3.output(f"static/{filename}")
-        except:
-            self._make_error()
+        else:
+            self.scale = 20
+        self.count_of_lines = 11
+        self.form3 = FPDF(orientation="L", unit="mm", format="A3")
+        self.form3.add_page()
+        self.form3.add_font("iso", "", "static/ISOCPEUR/ISOCPEUR.ttf", uni=True)
+        self._draw_form_3()
+        self._draw_specification(self._result_dict, 20, 184, self.title3)
+        self._make()
+        self.form3.output(f"static/{filename}")
+        # except:
+        #     self.make_error()
 
-    def _make_error(self):
-        print('error')
-        raise Exception
-        # return "Помилка! З даними параметрами неможливо виконати розрахунок. Збільшіть висоту перерізу."
+    # def _initial_scale_dimension(self):
+    #     self.scale = 10
+    #     self.l = (int(self._result_dict["Б-1"][2]) + 500) / self.scale
+    #     self.h = int(self._result_dict["Б-1"][3]) / self.scale
+    #     self.b = int(self._result_dict["Б-1"][4]) / self.scale
+    #     diam_pos1 = self._result_dict["1"][1] / self.scale
+    #     diam_pos2 = self._result_dict["2"][1] / self.scale
+    #     diam_pos3 = self._result_dict["3"][1] / self.scale
+    #     diam_pos4 = self._result_dict["4"][1] / self.scale
+    #     self.a = diam_pos1 / 2 + 20 / self.scale
+
+    def make_error(self):
+        return "Помилка! З даними параметрами неможливо виконати розрахунок. Збільшіть висоту перерізу."
 
     def _make(self):
         self._draw_beam(36, 30)
@@ -163,8 +174,8 @@ class MakePDF(FPDF):
             self.form3.ellipse(x0 + l + 30 - a + diam_pos1 / 2 + b - diam_pos2, y0 + a - diam_pos2 / 2, diam_pos2, diam_pos2, "FD")
             for i in range(self._result_dict["1"][0]):
                 self.form3.ellipse(x0 + l + 30 + a - diam_pos1 / 2 + s * i, y0 + h - a - diam_pos1 / 2, diam_pos1, diam_pos1, "FD")
-        self._dim_h(x0, y0 + h, 30 / self.scale, -2.5)
-        self._dim_h(x0 + 30 / self.scale, y0 + h, 50 / self.scale, 4)
+        self._dim_h(x0, y0 + h, 30 / self.scale, -3.5)
+        self._dim_h(x0 + 30 / self.scale, y0 + h, 50 / self.scale, 5)
         self._dim_h(
             x0 + 30 / self.scale + 50 / self.scale,
             y0 + h,
@@ -200,13 +211,13 @@ class MakePDF(FPDF):
             x0 + 30 / self.scale + 50 / self.scale + 2 * pos3_data[1] * 1000 / self.scale + 2 * mid_dist + pos3_data[3] * 1000 / self.scale,
             y0 + h,
             50 / self.scale,
-            -3
+            -4.5
         )
         self._dim_h(
             x0 + 30 / self.scale + 2 * 50 / self.scale + 2 * pos3_data[1] * 1000 / self.scale + 2 * mid_dist + pos3_data[3] * 1000 / self.scale,
             y0 + h,
             30 / self.scale,
-            3
+            4
         )
         self._dim_v(x0, y0, a, 3)
         self._dim_v(x0, y0 + a, h - 2 * a)
@@ -631,7 +642,7 @@ class MakePDF(FPDF):
 
 if __name__ == "__main__":
     test_dict = {
-        'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '900', '250', '510']
+        'Б-1': ['Несуча стіна', 'Опирання з однієї сторони', '6000', '250', '200']
     }
     filename = "files/result_test.pdf"
     s = MakePDF(test_dict, filename)

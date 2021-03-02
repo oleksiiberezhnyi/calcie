@@ -22,14 +22,14 @@
                     <option name="type_4" value="Опирання з однієї сторони">Опирання з однієї сторони</option>
                     <option name="type_5" value="Опирання з двох сторін">Опирання з двох сторін</option>
                 </select>
-            <p><label for="width_of_opening" class="">Введіть ширину проєму, мм:</label>
-                <input type="text" pattern="[0-9]{,4}" min="100" max="6000" name="width_of_opening" id="width_of_opening" placeholder="900" value="900">
-            <p id="hide_show_height_of_beam"><label for="height_of_beam" class="">Задайте висоту балки:</label>
-                <input type="text" pattern="[0-9]{,3}" min="120" max="1000" name="height_of_beam" id="height_of_beam" placeholder="250" value="250">
-            <p><label for="width_of_wall" class="">Введіть товщину стіни, мм:</label>
-                <input type="text" pattern="[0-9]{,3}" min="120" max="900" name="width_of_wall" id="width_of_wall" placeholder="510" value="510">
+        <p><label for="width_of_opening" class="">Введіть ширину проєму, мм:&#8194;<span>(від 100 до 5500 мм)</span></label>
+                <input type="number" pattern="[0-9]{,4}" min="100" max="5500" name="width_of_opening" id="width_of_opening" placeholder="1500" value="1500">
+            <p id="hide_show_height_of_beam"><label for="height_of_beam" class="">Задайте висоту балки:&#8194;<span>(від 120 до 900 мм)</span></label>
+                <input type="number" pattern="[0-9]{,3}" min="120" max="900" name="height_of_beam" id="height_of_beam" placeholder="300" value="300">
+            <p><label for="width_of_wall" class="">Введіть товщину стіни, мм:&#8194;<span>(від 120 до 900 мм)</span></label>
+                <input type="number" pattern="[0-9]{,3}" min="120" max="900" name="width_of_wall" id="width_of_wall" placeholder="250" value="250">
             <div class="btn">
-                <button type="submit" class="btn_submit" formmethod="post" formaction="/individual">Розрахувати</button>
+                <button type="submit" class="btn_submit" formmethod="post" formaction="/result_individual">Розрахувати</button>
 <!--                <button type="reset" class="btn_reset">Очистити форму</button>-->
 <!--                <button type="submit" class="btn_result" formmethod="get" formaction="/result_page">Переглянути результат</button>-->
             </div>

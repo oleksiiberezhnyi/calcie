@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, url_for
 from make_pdf import MakePDF as serialPDF
 from make_pdf_individual import MakePDF as individualPDF
 from select_serial import SelectSerial
@@ -127,17 +127,6 @@ def calculation():
 
 @app.route("/individual", methods=["GET", "POST"])
 def individual():
-    requests_dict_individual = MakeRequestDictIndividual()
-    if request.method == "POST":
-        requests_dict_individual.add(
-            request.form["type_of_wall"],
-            request.form["type_of_construction_wall"],
-            request.form["width_of_opening"],
-            request.form["height_of_beam"],
-            request.form["width_of_wall"]
-        )
-        file_name = f"files/result_individual.pdf"
-        individualPDF(requests_dict_individual.get(), file_name)
     return render_template("individual.html", title="Розрахунки", menu=menu, data=requests_dict.get(), count=len(requests_dict.get()))
 
 
@@ -147,8 +136,26 @@ def result_page():
     if request.method == "POST":
         if request.form["clear"] == "clear":
             requests_dict.clear()
-    return render_template("result_page.html", title="Таблиця для підбору", menu=menu, data=requests_dict.get(), count=len(requests_dict.get()))
+    return render_template("result_page.html", title="Результат", menu=menu, data=requests_dict.get(), count=len(requests_dict.get()))
 
+@app.route("/result_individual", methods=["GET", "POST"])
+def result_individual():
+    requests_dict_individual = MakeRequestDictIndividual()
+    file_name = f"files/result_individual.pdf"
+    if request.method == "POST":
+        requests_dict_individual.add(
+            request.form["type_of_wall"],
+            request.form["type_of_construction_wall"],
+            request.form["width_of_opening"],
+            request.form["height_of_beam"],
+            request.form["width_of_wall"]
+        )
+        try:
+            individualPDF(requests_dict_individual.get(), file_name)
+        except:
+            flash("Помилка! З даними параметрами неможливо виконати розрахунок. Змініть параметри перерізу.", "flash_error2")
+            return render_template("individual.html", title="Розрахунки", menu=menu, data=requests_dict.get(), count=len(requests_dict.get()))
+    return render_template("result_individual.html", title="Результат", menu=menu, file=file_name)
 
 @app.route("/about")
 def about():
