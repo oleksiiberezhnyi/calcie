@@ -2,6 +2,7 @@
     font-family: "SF Pro Display";
     font-weight: 400;
     font-size: 14px;
+    word-spacing: 0.2em;
     border-style: none;
     border-width: 1px;
     border-color: red;
@@ -329,16 +330,96 @@ span {
 .main_about h1 {
     font-size: 44px;
     font-weight: 700;
-    text-align: center;
-    margin: 0;
-    padding: 10px;
-    color: #367DA2
+    text-align: left;
+    text-transform: uppercase;
+    width: 800px;
+    margin: auto;
+    padding: 0px;
+    color: rgba(10,80,105,1);
+    border-bottom: solid 3px rgba(55,125,165,0.5);
 }
 .main_about h2 {
+    font-size: 28px;
+    font-weight: 500;
+    text-align: left;
+    text-transform: uppercase;
+    width: 800px;
+    margin: auto;
+    padding: 0px;
+    color: rgba(10,80,105,1)
+}
+.main_about_resume {
+    width: 800px;
+    margin: auto;
+}
+.main_about_contact {
+    display: inline-block;
+    position: relative;
+    left: 0px;
+    width: 250px;
+    margin: 0px 0px 0px 10px;
+    padding: 0px;
+    padding-top: 60px;
+    vertical-align: top;
+}
+.main_about_contact p {
+    margin: 0px 0px 15px 0px;
+}
+.main_about_contact a {
+    font-size: 14px;
+    font-weight: 400;
+    text-align: left;
+    text-transform: lowercase;
+    text-decoration: none;
+    margin: 0px 0px 0px 0px;
+    padding: 0px;
+    color: rgba(55,125,165,1);
+}
+.main_about_info {
+    display: inline-block;
+    position: relative;
+    text-align: justify;
+    width: 500px;
+    margin: 0px;
+    padding: 0px;
+    padding-top: 20px;
+}
+.main_about_info h3 {
+    font-size: 22px;
+    font-weight: 500;
+    text-align: left;
+    text-transform: uppercase;
+    width: 500px;
+    margin: 30px 0px 15px 0px;
+    padding: 0px;
+    color: rgba(10,80,105,1);
+    border-bottom: solid 1px rgba(55,125,165,0.5);
+}
+.main_about_info h4 {
     font-size: 20px;
     font-weight: 500;
-    text-align: center;
-    margin: 0;
-    padding: 10px;
-    color: #367DA2
+    text-align: left;
+    margin: 5px 0px 5px 10px;
+    padding: 0px;
+    color: rgba(55,125,165,1);
+}
+.main_about_info h5 {
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+    margin: 5px 0px 10px 10px;
+    padding: 0px;
+    color: rgba(55,125,165,1);
+}
+.main_about_info li {
+    list-style-image: url("../images/dot.svg");
+    list-style-position: inside;
+    tab-size: 20px;
+    text-align-all: justify;
+    text-align-last: left;
+    text-indent: 20px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.2;
+    padding: 10px 0px 0px 0px;
 }
